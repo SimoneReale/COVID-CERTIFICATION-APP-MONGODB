@@ -2,7 +2,7 @@ import datetime
 
 
 
-string_mongodb = "mongodb+srv://SimoneReale:srsr98205@clustercovid.bbrjj.mongodb.net/CovidDatabase?retryWrites=true&w=majority"
+string_mongodb = "mongodb+srv://<user>:<password>@clustercovid.bbrjj.mongodb.net/CovidDatabase?retryWrites=true&w=majority"
 
 
 #initial date and final date
