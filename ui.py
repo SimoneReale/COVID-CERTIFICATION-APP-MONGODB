@@ -28,6 +28,8 @@ class GlobalVariables:
 def connectDbAndReturnGraph(string_mongodb):
     cluster = pymongo.MongoClient(string_mongodb, tlsInsecure=True)
     db = cluster["CovidDatabase"]
+    db.list_collection_names()
+
     return db
 
 
@@ -207,7 +209,26 @@ def createFrame10():
 
 
 
+def createDatasetFrame():
+    def goToMenu():
+        createDatasetFrame.pack_forget()
+        frame_menu.pack()
+        return
+
+    createDatasetFrame = Frame(global_var.root_window, bg="white")
+    label_createpopframe = Label(createDatasetFrame, text="CREATE POPULATION", font="20", background="white", pady=20)
+    label_createpopframe.pack()
+    go_to_menu = Button(createDatasetFrame, text="Go to Menu", command=goToMenu)
+    go_to_menu.pack()
+    return createDatasetFrame
+
+
+
 def createMenuFrameAlt():
+    def goToCreateDatasetFrame():
+        frame_menu.pack_forget()
+        frame_create_dataset.pack()
+        return
     def goToFrame1():
         frame_menu.pack_forget()
         frame1.pack()
@@ -239,6 +260,15 @@ def createMenuFrameAlt():
     frame_menu = Frame(global_var.root_window, height = 1200, width = 1200, bg="white", padx=400)
     label_menu = Label(frame_menu, text="MENU", font="Arial 30", background="white", pady=40)
     label_menu.place(x=-70, y=0)
+
+
+
+    #left
+    label_new_1 = Label(frame_menu, text="MANAGEMENT", font="Arial 20", background="white", pady=30)
+    label_new_1.place(x=-363, y=100)
+
+    button_frame_create_pop = Button(frame_menu, text="Create random dataset", background = "#0AFAE8", command=goToCreateDatasetFrame, pady=15, width=35) #padx=40
+    button_frame_create_pop.place(x=-391, y=170)
 
 
 
@@ -289,6 +319,7 @@ if __name__ == "__main__":
     frame_login = createLoginFrame()
     frame_login.pack()
     frame_menu = createMenuFrameAlt()
+    frame_create_dataset = createDatasetFrame()
     frame1 = createFrame1()
     frame2 = createFrame2()
     frame3 = createFrame3()
