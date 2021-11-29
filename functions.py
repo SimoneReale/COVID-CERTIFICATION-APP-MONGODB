@@ -9,47 +9,21 @@ import numpy as np
 import datetime
 import random as rm
 from typing import List
+import traceback
+from codicefiscale import codicefiscale
 
 
-@dataclass
-class Vaccine :
+def createAuthorizedBody(active, location, type, list_of_doctors):
+    dict_auth = {'active' : active, 'location' : location, 'type' : type, 'list_of_doctors' : list_of_doctors}
+    return dict_auth
 
-    @staticmethod
-    def createRandomListOfVaccination():
-        with open("txts\\namesRight.txt","r") as nomi, open("txts\\surnamesRight.txt","r") as cognomi:
-            try:
-                list_of_vaccinations = []
-                    
-                brand_vacc = conf.vaccines[randint(0, len(conf.vaccines) - 1)]
+def createVaccine(brand, lot, date, location, cf_doctor):
+    dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'location' : location, 'cf_doctor' : cf_doctor}
+    return dict_vaccine
 
-                """for i in range(0, conf.max_number_of_vaccines):
-                    list_of_vaccinations.append(Vaccine(brand_vacc, randint(500, 1000000), returnRandomDate(), ))"""
-                    
-            except:
-                print("ERROR WHILE OPENING FILE IN CREATE RANDOM LIST OF VACCINATIONS")
-                return
-        
-
-
-
-
-    brand : str
-    lot : int
-    date : datetime.date
-    location : str
-    cf_doctor : str
-
-
-
-@dataclass
-class Test :
-
-    test_type : str
-    date : datetime.date
-    location : str
-    result : bool
-    cf_doctor : str
-
+def createTest(test_type, date, location, result, cf_doctor):
+    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctior' : cf_doctor}
+    return dict_test
 
 
 def returnRandomDate():
@@ -60,20 +34,29 @@ def returnRandomDate():
     return random_date
 
 
+def returnRandomBirthDate():
+
+    random_number_of_days = rm.randrange(conf.days_between_birthdates)
+    random_birthdate = conf.start_birthdate + datetime.timedelta(days=random_number_of_days)
+
+    return random_birthdate
+
+
+
 @dataclass
-class Person :
+class Certificate :
 
     @staticmethod
-    def createPerson(name, surname, place_of_birth):
+    def createCertificate(name, surname, place_of_birth, vaccines, tests):
 
         age = abs(int(np.random.normal(45, 30)))
 
         if(age > 12 and conf.vaccine_probability > random()):
-            person = Person(name, surname, age, place_of_birth ,conf.vaccines[randint(0, len(conf.vaccines) - 1)], randint(1, 4))
+            person = Certificate(name, surname, age, place_of_birth ,conf.vaccines[randint(0, len(conf.vaccines) - 1)], randint(1, 4))
             return person
 
         else:
-            person = Person(name, surname, age, "no vaccine", 0)
+            person = Certificate(name, surname, age, place_of_birth, "no vaccine", tests)
             return person
 
 
@@ -81,7 +64,89 @@ class Person :
     surname : str
     age : int
     place_of_birth : str
-    vaccines : List(Vaccine)
-    tests : List(Test)
+    vaccines : str
+    tests : str
 
 
+def createPerson(name, surname, birthdate, list_of_vaccinations, list_of_tests):
+    dict_person = {'name' : name, 'surname' : surname, 'birthdate' : birthdate, 'list_of_vaccinations' : list_of_vaccinations, 'list_of_tests' : list_of_tests}
+    return dict_person
+
+
+
+
+
+def createDataset(number_of_people, db):
+    with open("txts\\namesRight.txt","r") as nomi, open("txts\\surnamesRight.txt","r") as cognomi, open("txts\\places.txt","r") as vie, open("txts\\capoluoghi.txt","r") as capoluoghi:
+            
+            try:
+
+                lista_nomi = nomi.readlines()
+                len_nomi = len(lista_nomi) - 1
+                lista_cognomi = cognomi.readlines()
+                len_cognomi = len(lista_cognomi) - 1
+                lista_vie = vie.readlines()
+                len_vie = len(lista_vie) - 1
+                
+                #creo gli auth_bod
+                list_of_authbod = []
+                for j in range(0, int(number_of_people / 6) + 2):
+                    list_of_doctors_auth_bod = []
+                    for f in range(0, randint(0, conf.max_number_of_doctor_per_auth_body) + 1):
+                        doctor = lista_nomi[randint(0, len_nomi)].strip('\n') + " " +lista_cognomi[randint(0, len_cognomi)].strip('\n')
+                        list_of_doctors_auth_bod.append(doctor)
+
+                    list_of_authbod.append(createAuthorizedBody(True, lista_vie[randint(0, len_vie)].strip('\n'), 
+                                           conf.type_of_authbody[randint(0, len(conf.type_of_authbody) - 1)], list_of_doctors_auth_bod))
+
+                #inserisco nel database gli authorized bodies
+                col_authBod = db['AuthorizedBodies_Collection']
+                col_authBod.insert_many(list_of_authbod)
+
+
+
+                list_of_people = []
+
+                for i in range(0, number_of_people):
+
+                    person_name = lista_nomi[randint(0, len_nomi)].strip('\n')
+                    person_surname = lista_cognomi[randint(0, len_cognomi)].strip('\n')
+                    birthdate = str(returnRandomBirthDate())
+
+                
+                    list_of_vaccinations = []
+                        
+                    brand_vacc = conf.vaccines[randint(0, len(conf.vaccines) - 1)]
+
+                    for i in range(0, randint(0, conf.max_number_of_vaccines)):
+                        vacc_lot = randint(500, 10000000)
+                        auth_bod = list_of_authbod[randint(0, len(list_of_authbod) - 1)]
+                        list_of_doc = auth_bod['list_of_doctors']
+                        vaccine = createVaccine(brand_vacc, vacc_lot, str(returnRandomDate()), auth_bod['location'], list_of_doc[randint(0, len(list_of_doc) - 1)])
+                        list_of_vaccinations.append(vaccine)
+
+
+                    list_of_tests = []
+
+                    for k in range(0, randint(0, conf.max_number_of_tests)):
+                        auth_bod = list_of_authbod[randint(0, len(list_of_authbod) - 1)]
+                        list_of_doc = auth_bod['list_of_doctors']
+                        test_result = True if random() < conf.probability_positive_test_result else False
+                        test = createTest(conf.type_of_test[randint(0, len(conf.type_of_test) - 1)], str(returnRandomDate()), auth_bod['location'], test_result, list_of_doc[randint(0, len(list_of_doc) - 1)])
+                        list_of_tests.append(test)
+
+                    person = createPerson(person_name, person_surname, birthdate, list_of_vaccinations, list_of_tests)
+                    list_of_people.append(person)
+
+
+                #inserisco nel database le persone
+                col_authBod = db['Certificate_Collection']
+                col_authBod.insert_many(list_of_people)
+                
+                
+                return list_of_people
+
+            except Exception:
+                print(traceback.format_exc())
+                print("ERROR WHILE OPENING FILE IN CREATE RANDOM LIST OF VACCINATIONS")
+                return

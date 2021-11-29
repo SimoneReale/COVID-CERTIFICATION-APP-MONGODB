@@ -12,6 +12,7 @@ import pymongo
 import conf
 
 import numpy as np
+import functions as func
 
 
 
@@ -25,12 +26,14 @@ class GlobalVariables:
 
 
 
-def connectDbAndReturnGraph(string_mongodb):
+def connectDbAndReturnDb(string_mongodb):
     cluster = pymongo.MongoClient(string_mongodb, tlsInsecure=True)
     db = cluster["CovidDatabase"]
     db.list_collection_names()
 
     return db
+
+
 
 
 def createLoginFrame():
@@ -41,7 +44,7 @@ def createLoginFrame():
     def loginAndChangeFrame():
         try:
             credenziali = inner_prendiCredenziali()
-            global_var.db = connectDbAndReturnGraph(credenziali)
+            global_var.db = connectDbAndReturnDb(credenziali)
             label_error.pack_forget()
             frame_login.pack_forget()
             frame_menu.pack()
@@ -215,9 +218,32 @@ def createDatasetFrame():
         frame_menu.pack()
         return
 
+    def create():
+        t = Thread(target=func.createDataset, args=(scale_pop.get(), global_var.db))
+        t.start()
+        return
+
+    def deleteAll():
+        t = Thread(target=deleteAllSub)
+        t.start()
+        return
+
+    def deleteAllSub():
+        col_authBod = global_var.db['AuthorizedBodies_Collection']
+        col_cert = global_var.db['Certificate_Collection']
+        col_authBod.delete_many({})
+        col_cert.delete_many({})
+
     createDatasetFrame = Frame(global_var.root_window, bg="white")
-    label_createpopframe = Label(createDatasetFrame, text="CREATE POPULATION", font="20", background="white", pady=20)
+    label_createpopframe = Label(createDatasetFrame, text="CREATE DATASET: NUMBER OF PEOPLE", font="20", background="white", pady=20)
     label_createpopframe.pack()
+    scale_pop = Scale(createDatasetFrame, from_=10, to=100, orient="horizontal", background="white", length=200, cursor="plus", font="Arial 15")
+    scale_pop.set(50)
+    scale_pop.pack(pady=15)
+    button_create = Button(createDatasetFrame, text="CREATE", command=create)
+    button_create.pack()
+    button_create = Button(createDatasetFrame, text="DELETE ALL", command=deleteAll)
+    button_create.pack()
     go_to_menu = Button(createDatasetFrame, text="Go to Menu", command=goToMenu)
     go_to_menu.pack()
     return createDatasetFrame
@@ -315,7 +341,7 @@ def createMenuFrameAlt():
 
 if __name__ == "__main__":
 
-    global_var = GlobalVariables(db= Any, root_window=createRootWindow())
+    global_var = GlobalVariables(db = Any, root_window=createRootWindow())
     frame_login = createLoginFrame()
     frame_login.pack()
     frame_menu = createMenuFrameAlt()
