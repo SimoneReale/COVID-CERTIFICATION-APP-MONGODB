@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, FormatStrFormatter
 import pymongo
 import conf
+import credentials_db as c_db
 
 import numpy as np
 import functions as func
@@ -66,7 +67,7 @@ def createLoginFrame():
     label_string = Label(frame_login, text="Insert the string of the db:", font='Arial 15', foreground="green", background="white", pady=20)
     label_string.pack()
     insert_string = Entry(frame_login, font="Arial 8", width=100)
-    insert_string.insert(0, conf.string_mongodb)
+    insert_string.insert(0, c_db.string_mongodb)
     insert_string.pack(pady=20)
 
     button_login = Button(frame_login, text="Login", command=loginAndChangeFrame, pady=15, padx=55)

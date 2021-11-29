@@ -1,0 +1,1 @@
+string_mongodb = "mongodb+srv://<username>:<password>@clustercovid.bbrjj.mongodb.net/CovidDatabase?retryWrites=true&w=majority"
