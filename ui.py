@@ -11,7 +11,7 @@ from matplotlib.ticker import AutoMinorLocator, FormatStrFormatter
 import pymongo
 import conf
 import credentials_db as c_db
-
+import qrcode as qr
 import numpy as np
 import functions as func
 
@@ -82,7 +82,7 @@ def createLoginFrame():
 def createRootWindow():
     root = Tk()
     root.title("CERTIFICATE DATABASE")
-    root.geometry("800x800")
+    root.geometry("900x900")
     root.configure(background="white")
     titolo = Label(root, text="SMBUD DELIVERY 2: MONGODB",font="Arial 30" ,background="white")
     titolo.pack()
@@ -96,13 +96,65 @@ def createRootWindow():
 #frame reale
 def createFrame1():
     def goToMenu():
+        sub_frame_insert.pack()
+
+        for widget in sub_frame_qr.winfo_children():
+            widget.destroy()
+
+        sub_frame_qr.pack_forget()
         frame1.pack_forget()
         frame_menu.pack()
         return
 
+    def searchGreenPass():
+        col_cert = global_var.db['Certificate_Collection']
+        person_name = insert_name.get().upper()
+        person_surname = insert_surname.get().upper()
+
+        query = { "name": person_name, "surname" : person_surname}
+        dict_person = col_cert.find_one(query)
+
+        string_person = ""
+        for x in dict_person.items():
+            string_person = string_person + str(x) +"   "
+        
+        label_person = Label(sub_frame_qr, text = person_name +" " +person_surname, font="Arial 20", background="white", pady=20)
+        label_person.pack()
+
+        img=qr.make(string_person)
+        img = img.resize((600, 600), Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(img)
+        panel = Label(sub_frame_qr, image=img, background='white')
+        panel.image = img
+        panel.pack()
+
+        sub_frame_insert.pack_forget()
+        sub_frame_qr.pack()
+        return
+
+
     frame1 = Frame(global_var.root_window, bg="white")
-    label_frame1 = Label(frame1, text="FRAME 1 REALE", font="20", background="white", pady=20)
+    label_frame1 = Label(frame1, text="GET GREEN PASS", font="20", background="white", pady=20)
     label_frame1.pack()
+
+    sub_frame_qr = Frame(frame1, bg='white')
+    sub_frame_insert = Frame(frame1, bg = 'white')
+    sub_frame_insert.pack()
+    
+
+    #name
+    Label(sub_frame_insert, text="Insert the name of patient:", font='Arial 15', foreground="green",background="white", pady=5).pack()
+    insert_name = Entry(sub_frame_insert, font="Arial 20")
+    insert_name.pack(pady=5)
+    #surname
+    Label(sub_frame_insert, text="Insert the surname of patient:", font='Arial 15', foreground="green",background="white", pady=5).pack()
+    insert_surname = Entry(sub_frame_insert, font="Arial 20")
+    insert_surname.pack(pady=5)
+
+    #add button
+    button_search = Button(sub_frame_insert, text="FIND GREEN PASS!", command=searchGreenPass)
+    button_search.pack()
+
     go_to_menu = Button(frame1, text="Go to Menu", command=goToMenu)
     go_to_menu.pack()
     return frame1
@@ -303,7 +355,7 @@ def createMenuFrameAlt():
     label_new_2 = Label(frame_menu, text="QUERIES", font="Arial 20", background="white", pady=30)
     label_new_2.place(x=-70, y=100)
 
-    button_frame1 = Button(frame_menu, text="QUERY 1\nFRAME 1", background="#FACB0A", command=goToFrame1, pady=15, width=35)
+    button_frame1 = Button(frame_menu, text="QUERY 1\nGET GREEN PASS 1", background="#FACB0A", command=goToFrame1, pady=15, width=35)
     button_frame1.place(x=-129, y=170)
 
     button_frame3 = Button(frame_menu, text="QUERY 3\nFRAME 3", background="#FA860A", command=goToFrame3, pady=15, width=35)
