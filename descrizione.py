@@ -1,11 +1,11 @@
 import random as rm
 
 
-colore_occhi = ('azzurri', 'verdi', 'castani', 'neri', 'ambra', 'blu' )
+colore_occhi = ('azzurri', 'verdi', 'castani', 'neri', 'ambra', 'blu', 'rossi' )
 
-colore_capelli = ('rossi', 'neri', 'castani', 'biondi', 'giallo paglierino', 'castano scuro')
+colore_capelli = ('rossi', 'neri', 'castani', 'biondi', 'giallo paglierino', 'castano scuro', 'ramati', 'bianchi')
 
-tipo_fisico = ('magro', 'slanciato', 'grasso', 'sportivo', 'malaticcio', 'allenato', 'possente')
+tipo_fisico = ('magro', 'slanciato', 'grasso', 'sportivo', 'malaticcio', 'allenato', 'possente', 'difficile da descrivere', 'armonioso', 'deforme')
 
 
 
