@@ -1,1 +1,1 @@
-string_mongodb = "mongodb+srv://<username>:<password>@clustercovid.bbrjj.mongodb.net/CovidDatabase?retryWrites=true&w=majority"
+string_mongodb = "mongodb+srv://SimoneReale:srsr98205@clustercovid.bbrjj.mongodb.net/CovidDatabase?retryWrites=true&w=majority"

@@ -10,20 +10,26 @@ import datetime
 import random as rm
 from typing import List
 import traceback
-from codicefiscale import codicefiscale
+import descrizione as descr
 
 
 def createAuthorizedBody(active, location, type, list_of_doctors):
     dict_auth = {'active' : active, 'location' : location, 'type' : type, 'list_of_doctors' : list_of_doctors}
     return dict_auth
 
-def createVaccine(brand, lot, date, location, cf_doctor):
-    dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'location' : location, 'cf_doctor' : cf_doctor}
+def createVaccine(brand, lot, date, production_date,  location, cf_doctor):
+    dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'production_date' : production_date,  'location' : location, 'cf_doctor' : cf_doctor}
     return dict_vaccine
 
 def createTest(test_type, date, location, result, cf_doctor):
-    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctior' : cf_doctor}
+    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctor' : cf_doctor}
     return dict_test
+
+def createPerson(name, surname, birthdate, details, list_of_vaccinations, list_of_tests):
+    dict_person = {'name' : name, 'surname' : surname, 'birthdate' : birthdate, 'details' : details, 'list_of_vaccinations' : list_of_vaccinations, 'list_of_tests' : list_of_tests}
+    return dict_person
+
+
 
 
 def returnRandomDate():
@@ -67,10 +73,6 @@ class Certificate :
     vaccines : str
     tests : str
 
-
-def createPerson(name, surname, birthdate, list_of_vaccinations, list_of_tests):
-    dict_person = {'name' : name, 'surname' : surname, 'birthdate' : birthdate, 'list_of_vaccinations' : list_of_vaccinations, 'list_of_tests' : list_of_tests}
-    return dict_person
 
 
 
@@ -122,7 +124,12 @@ def createDataset(number_of_people, db):
                         vacc_lot = randint(500, 10000000)
                         auth_bod = list_of_authbod[randint(0, len(list_of_authbod) - 1)]
                         list_of_doc = auth_bod['list_of_doctors']
-                        vaccine = createVaccine(brand_vacc, vacc_lot, str(returnRandomDate()), auth_bod['location'], list_of_doc[randint(0, len(list_of_doc) - 1)])
+
+                        date = returnRandomDate()
+
+                        production_date = date - datetime.timedelta(days= randint(0, conf.max_number_of_days_between_production_and_use_of_vaccine))
+
+                        vaccine = createVaccine(brand_vacc, vacc_lot, str(returnRandomDate()), str(production_date), auth_bod['location'], list_of_doc[randint(0, len(list_of_doc) - 1)])
                         list_of_vaccinations.append(vaccine)
 
 
@@ -135,7 +142,8 @@ def createDataset(number_of_people, db):
                         test = createTest(conf.type_of_test[randint(0, len(conf.type_of_test) - 1)], str(returnRandomDate()), auth_bod['location'], test_result, list_of_doc[randint(0, len(list_of_doc) - 1)])
                         list_of_tests.append(test)
 
-                    person = createPerson(person_name, person_surname, birthdate, list_of_vaccinations, list_of_tests)
+                    person_details = descr.returnFraseDescrizione()
+                    person = createPerson(person_name, person_surname, birthdate, person_details, list_of_vaccinations, list_of_tests)
                     list_of_people.append(person)
 
 
