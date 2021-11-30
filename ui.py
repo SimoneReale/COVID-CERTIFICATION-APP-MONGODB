@@ -121,8 +121,11 @@ def createFrame1():
 
         if type(dict_person) is not type(None): 
             string_person = ""
-            for x in dict_person.items():
-                string_person = string_person + str(x) +"   "
+            
+            for key in dict_person:
+                if key != 'list_of_vaccinations' and key != 'list_of_tests' and key != '_id':
+                    string_person = string_person + str(key) +" : " +str(dict_person[key]) +"                                                        "
+                
             
             img=qr.make(string_person)
             img = img.resize((600, 600), Image.ANTIALIAS)
@@ -204,6 +207,10 @@ def createFrame2():
             list_of_vaccinations.append(new_vaccine)
             newvalues = { "$set": { "list_of_vaccinations": list_of_vaccinations } }
             col_cert.update_one(query, newvalues)
+
+
+            #aggiorno la validità
+            func.updateValidity(col_cert, person_name, person_surname)
 
         else:
             label_frame2.configure(text="ERROR", foreground="red")
@@ -346,6 +353,9 @@ def createFrame9():
             list_of_tests.append(new_test)
             newvalues = { "$set": { "list_of_tests": list_of_tests } }
             col_cert.update_one(query, newvalues)
+
+
+            func.updateValidity(col_cert, person_name, person_surname)
 
         else:
             label_frame9.configure(text="ERROR")

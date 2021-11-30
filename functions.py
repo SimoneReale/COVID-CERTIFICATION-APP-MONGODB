@@ -24,6 +24,8 @@ def createTest(test_type, date, location, result, cf_doctor):
 
 def createPerson(name, surname, birthdate, details, list_of_vaccinations, list_of_tests):
     dict_person = {'name' : name, 'surname' : surname, 'birthdate' : birthdate, 'details' : details, 'list_of_vaccinations' : list_of_vaccinations, 'list_of_tests' : list_of_tests}
+    validity_date = returnCertificateExpirationDate(dict_person)
+    dict_person['validity_date'] = str(validity_date)
     return dict_person
 
 
@@ -86,12 +88,21 @@ def returnCertificateExpirationDate(dict_person):
         last_vaccine_date = datetime.datetime.strptime(last_vaccine['date'], "%Y-%m-%d").date()
 
         validity_date = last_test_date + datetime.timedelta(days=conf.validity_of_test_number_of_days) if last_test_date > last_vaccine_date + datetime.timedelta(days=conf.validity_of_vaccine_number_of_days) else last_vaccine_date + datetime.timedelta(days=conf.validity_of_vaccine_number_of_days)
+        
 
+        
         return validity_date
 
 
 
+def updateValidity(certificate_collection, name, surname):
+    query = { "name": name, "surname" : surname}
+    dict_person = certificate_collection.find_one(query)
 
+    newvalues = { "$set": { "validity_date": str(returnCertificateExpirationDate(dict_person)) } }
+    certificate_collection.update_one(query, newvalues)
+
+    return
 
 
 
