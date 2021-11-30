@@ -190,8 +190,13 @@ def createFrame2():
         if type(dict_person) is not type(None):
             label_frame2.configure(text="ADD A VACCINE", foreground='black') 
             list_of_vaccinations = dict_person['list_of_vaccinations']
+            try:
+                lotto = int(insert_lot.get())
+            except:
+                 label_frame2.configure(text="LOT IS A NUMBER!", foreground="red")
+                 return
 
-            new_vaccine= func.createVaccine(insert_brand.get().upper(), insert_lot.get(), str(cal_date.get_date()), 
+            new_vaccine= func.createVaccine(option_vaccine_brand_variable.get(), lotto, str(cal_date.get_date()), 
                                             str(cal_production.get_date()), insert_location.get(), insert_cf_doctor.get().upper())
 
             list_of_vaccinations.append(new_vaccine)
@@ -222,9 +227,12 @@ def createFrame2():
     insert_surname = Entry(left_frame, font="Arial 10")
     insert_surname.grid(row=3, column=0, sticky="nswe")
     #brand
-    Label(left_frame, text="Insert the brand of the vaccine:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=4, column=0, sticky="nswe")
-    insert_brand = Entry(left_frame, font="Arial 10")
-    insert_brand.grid(row=5, column=0, sticky="nswe")
+    choices = conf.vaccines
+    option_vaccine_brand_variable = StringVar(left_frame)
+    option_vaccine_brand_variable.set(conf.vaccines[0])
+    Label(left_frame, text="Choose the brand::", font='Arial 10', foreground="green",background="white", pady=5).grid(row=4, column=0, sticky="nswe")
+    option_test_type = OptionMenu(left_frame, option_vaccine_brand_variable, *choices)
+    option_test_type.grid(row=5, column=0, sticky="nswe")
     #test date
     Label(right_frame, text="Insert vaccine date:", font='Arial 10', foreground="green", background="white", pady=5).grid(row=0, column=0, sticky="nswe")
     cal_date= Calendar(right_frame, date_pattern="yyyy-mm-dd")
@@ -234,7 +242,7 @@ def createFrame2():
     cal_production= Calendar(right_frame, date_pattern="yyyy-mm-dd")
     cal_production.grid(row=3, column=0, sticky="nswe")
     #lot
-    Label(left_frame, text="Insert the lot of the vaccine:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=6, column=0, sticky="nswe")
+    Label(left_frame, text="Insert the lot of the vaccine (it's a number):", font='Arial 10', foreground="green",background="white", pady=5).grid(row=6, column=0, sticky="nswe")
     insert_lot = Entry(left_frame, font="Arial 10")
     insert_lot.grid(row=7, column=0, sticky="nswe")
     #location
