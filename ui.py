@@ -101,7 +101,7 @@ def createFrame1():
 
         for widget in sub_frame_qr.winfo_children():
             widget.destroy()
-
+        label_frame1.configure(text= "GET GREEN PASS", foreground='green')
         sub_frame_qr.pack_forget()
         frame1.pack_forget()
         frame_menu.pack()
@@ -114,6 +114,8 @@ def createFrame1():
 
         query = { "name": person_name, "surname" : person_surname}
         dict_person = col_cert.find_one(query)
+        validity_string = "Date expiration: " +str(func.returnCertificateExpirationDate(dict_person)) if func.returnCertificateExpirationDate(dict_person) != None else "Invalid certificate"
+        label_frame1.configure(text= validity_string, foreground='red')
         label_person = Label(sub_frame_qr, text = person_name +" " +person_surname, font="Arial 20", background="white", pady=20)
         label_person.pack()
 
@@ -317,7 +319,7 @@ def createFrame5():
 
 
 
-#frame urso
+#frame add test
 def createFrame9():
     def goToMenu():
         label_frame9.configure(text="ADD A TEST")

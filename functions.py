@@ -46,6 +46,52 @@ def returnRandomBirthDate():
 
 
 
+def returnCertificateExpirationDate(dict_person):
+
+    
+    if len(dict_person['list_of_tests']) == 0 and len(dict_person['list_of_vaccinations']) == 0:
+        return None
+
+    elif len(dict_person['list_of_tests']) == 0 and len(dict_person['list_of_vaccinations']) > 0:
+        sorted_list_of_vaccinations = sorted(dict_person['list_of_vaccinations'], key=lambda d: datetime.datetime.strptime(d['date'], "%Y-%m-%d").date()) 
+        last_vaccine = sorted_list_of_vaccinations[-1]
+        last_vaccine_date = datetime.datetime.strptime(last_vaccine['date'], "%Y-%m-%d").date()
+        return last_vaccine_date + datetime.timedelta(days=conf.validity_of_vaccine_number_of_days)
+
+
+    elif len(dict_person['list_of_tests']) > 0 and len(dict_person['list_of_vaccinations']) == 0:
+         sorted_list_of_tests = sorted(dict_person['list_of_tests'], key=lambda d: datetime.datetime.strptime(d['date'], "%Y-%m-%d").date()) 
+         last_test = sorted_list_of_tests[-1]
+
+         if last_test['result'] == True:
+            return None
+
+         else:
+            last_test_date = datetime.datetime.strptime(last_test['date'], "%Y-%m-%d").date()
+            return last_test_date + datetime.timedelta(days=conf.validity_of_test_number_of_days)
+
+
+
+    else:
+        sorted_list_of_vaccinations = sorted(dict_person['list_of_vaccinations'], key=lambda d: datetime.datetime.strptime(d['date'], "%Y-%m-%d").date()) 
+        sorted_list_of_tests = sorted(dict_person['list_of_tests'], key=lambda d: datetime.datetime.strptime(d['date'], "%Y-%m-%d").date()) 
+
+        last_test = sorted_list_of_tests[-1]
+        last_vaccine = sorted_list_of_vaccinations[-1]
+
+        if last_test['result'] == True:
+            return None
+
+        last_test_date = datetime.datetime.strptime(last_test['date'], "%Y-%m-%d").date()
+        last_vaccine_date = datetime.datetime.strptime(last_vaccine['date'], "%Y-%m-%d").date()
+
+        validity_date = last_test_date + datetime.timedelta(days=conf.validity_of_test_number_of_days) if last_test_date > last_vaccine_date + datetime.timedelta(days=conf.validity_of_vaccine_number_of_days) else last_vaccine_date + datetime.timedelta(days=conf.validity_of_vaccine_number_of_days)
+
+        return validity_date
+
+
+
+
 
 
 
