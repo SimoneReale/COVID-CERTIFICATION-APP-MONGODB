@@ -1,4 +1,3 @@
-from cgi import test
 from tkinter import *
 from tkinter.ttk import Progressbar
 from tkinter.ttk import Treeview
@@ -28,9 +27,9 @@ class GlobalVariables:
 
 
 
-def connectDbAndReturnDb(string_mongodb):
+def connectDbAndReturnDb(string_mongodb, db_name):
     cluster = pymongo.MongoClient(string_mongodb, tlsInsecure=True)
-    db = cluster["CovidDatabase"]
+    db = cluster[db_name]
     db.list_collection_names()
 
     return db
@@ -40,13 +39,9 @@ def connectDbAndReturnDb(string_mongodb):
 
 def createLoginFrame():
 
-    def inner_prendiCredenziali():
-        return insert_string.get()
-
     def loginAndChangeFrame():
         try:
-            credenziali = inner_prendiCredenziali()
-            global_var.db = connectDbAndReturnDb(credenziali)
+            global_var.db = connectDbAndReturnDb(insert_string.get(), insert_db_name.get())
             label_error.pack_forget()
             frame_login.pack_forget()
             frame_menu.pack()
@@ -70,6 +65,12 @@ def createLoginFrame():
     insert_string = Entry(frame_login, font="Arial 8", width=100)
     insert_string.insert(0, c_db.string_mongodb)
     insert_string.pack(pady=20)
+
+    label_name = Label(frame_login, text="Insert the string of the db:", font='Arial 30', foreground="green", background="white", pady=20)
+    label_name.pack()
+    insert_db_name = Entry(frame_login, font="Arial 8", width=100)
+    insert_db_name.insert(0, c_db.db_name)
+    insert_db_name.pack(pady=20)
 
     button_login = Button(frame_login, text="Login", command=loginAndChangeFrame, pady=15, padx=55)
     button_login.pack()
