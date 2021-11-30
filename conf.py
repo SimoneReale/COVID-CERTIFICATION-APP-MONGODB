@@ -18,7 +18,7 @@ days_between_birthdates = time_between_birthdates.days
 
 
 
-vaccines = ('Pfizer', 'Astrazeneca', 'Moderna', 'Sputnik')
+vaccines = ('PFIZER', 'ASTRAZENECA', 'MODERNA', 'SPUTNIK')
 vaccine_probability = 0.7
 max_number_of_days_between_production_and_use_of_vaccine = 80
 max_number_of_vaccines = 4

@@ -47,6 +47,12 @@ def returnRandomBirthDate():
 
 
 
+
+
+
+
+
+
 def createDataset(number_of_people, db):
     with open("txts\\namesRight.txt","r") as nomi, open("txts\\surnamesRight.txt","r") as cognomi, open("txts\\places.txt","r") as vie, open("txts\\capoluoghi.txt","r") as capoluoghi:
             
@@ -79,7 +85,7 @@ def createDataset(number_of_people, db):
 
                 for i in range(0, number_of_people):
 
-                    person_name = rm.choice(lista_nomi).strip('\n')
+                    person_name = lista_nomi[i].strip('\n')
                     
                     person_surname = rm.choice(lista_cognomi).strip('\n')
                     birthdate = str(returnRandomBirthDate())

@@ -1,3 +1,4 @@
+from cgi import test
 from tkinter import *
 from tkinter.ttk import Progressbar
 from tkinter.ttk import Treeview
@@ -170,18 +171,87 @@ def createFrame1():
 
 
 
-#frame shalby
+#frame comando aggiungi vaccino Reale
 def createFrame2():
     def goToMenu():
+        label_frame2.configure(text="ADD A VACCINE", foreground="black") 
         frame2.pack_forget()
         frame_menu.pack()
         return
+
+    #da trovare un modo per fare tutto con una query soltanto
+    def addVaccine():
+        col_cert = global_var.db['Certificate_Collection']
+        person_name = insert_name.get().upper()
+        person_surname = insert_surname.get().upper()   
+        query = { "name": person_name, "surname" : person_surname}
+        dict_person = col_cert.find_one(query)
+        
+        if type(dict_person) is not type(None):
+            label_frame2.configure(text="ADD A VACCINE", foreground='black') 
+            list_of_vaccinations = dict_person['list_of_vaccinations']
+
+            new_vaccine= func.createVaccine(insert_brand.get().upper(), insert_lot.get(), str(cal_date.get_date()), 
+                                            str(cal_production.get_date()), insert_location.get(), insert_cf_doctor.get().upper())
+
+            list_of_vaccinations.append(new_vaccine)
+            newvalues = { "$set": { "list_of_vaccinations": list_of_vaccinations } }
+            col_cert.update_one(query, newvalues)
+
+        else:
+            label_frame2.configure(text="ERROR", foreground="red")
+
+
   
     frame2 = Frame(global_var.root_window, bg="white")
-    label_frame2 = Label(frame2, text="FRAME 2 SHALBY", font="Arial 20", background="white", pady=10)
-    label_frame2.pack()
-    go_to_menu = Button(frame2, text="Go to Menu", command=goToMenu)
-    go_to_menu.pack()
+    label_frame2 = Label(frame2, text="ADD A VACCINE", font="Arial 30", background="white", pady=10)
+    label_frame2.grid(row=15, column=0)
+
+    left_frame = Frame(frame2, background='white')
+    left_frame.grid(row=0, column=0, sticky="nswe")
+
+    right_frame = Frame(frame2, background='white')
+    right_frame.grid(row=0, column=1, sticky="nswe")
+
+    #name
+    Label(left_frame, text="Insert the name of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=0, column=0, sticky="nswe")
+    insert_name = Entry(left_frame, font="Arial 10")
+    insert_name.grid(row=1, column=0, sticky="nswe")
+    #surname
+    Label(left_frame, text="Insert the surname of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=2, column=0, sticky="nswe")
+    insert_surname = Entry(left_frame, font="Arial 10")
+    insert_surname.grid(row=3, column=0, sticky="nswe")
+    #brand
+    Label(left_frame, text="Insert the brand of the vaccine:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=4, column=0, sticky="nswe")
+    insert_brand = Entry(left_frame, font="Arial 10")
+    insert_brand.grid(row=5, column=0, sticky="nswe")
+    #test date
+    Label(right_frame, text="Insert vaccine date:", font='Arial 10', foreground="green", background="white", pady=5).grid(row=0, column=0, sticky="nswe")
+    cal_date= Calendar(right_frame, date_pattern="yyyy-mm-dd")
+    cal_date.grid(row=1, column=0, sticky="nswe")
+    #production date
+    Label(right_frame, text="Insert date of production:", font='Arial 10', foreground="green", background="white", pady=5).grid(row=2, column=0, sticky="nswe")
+    cal_production= Calendar(right_frame, date_pattern="yyyy-mm-dd")
+    cal_production.grid(row=3, column=0, sticky="nswe")
+    #lot
+    Label(left_frame, text="Insert the lot of the vaccine:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=6, column=0, sticky="nswe")
+    insert_lot = Entry(left_frame, font="Arial 10")
+    insert_lot.grid(row=7, column=0, sticky="nswe")
+    #location
+    Label(left_frame, text="Insert the location:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=8, column=0, sticky="nswe")
+    insert_location = Entry(left_frame, font="Arial 10")
+    insert_location.grid(row=9, column=0, sticky="nswe")
+    #cf_doctor
+    Label(left_frame, text="Insert the name and the surname of the doctor:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=10, column=0, sticky="nswe")
+    insert_cf_doctor = Entry(left_frame, font="Arial 10")
+    insert_cf_doctor.grid(row=11, column=0, sticky="nswe")
+
+    #add button
+    button_search = Button(left_frame, text="Add Vaccine!", command=addVaccine, padx=30, pady=30)
+    button_search.grid(row=12, column=0, sticky="nswe")
+
+    go_to_menu = Button(left_frame, text="Go to Menu", command=goToMenu)
+    go_to_menu.grid(row=13, column=0, sticky="nswe")
     return frame2
 
 
@@ -242,17 +312,88 @@ def createFrame5():
 #frame urso
 def createFrame9():
     def goToMenu():
+        label_frame9.configure(text="ADD A TEST")
         frame9.pack_forget()
         frame_menu.pack()
         return
 
+    #da trovare un modo per fare tutto con una query soltanto
+    def addTest():
+        col_cert = global_var.db['Certificate_Collection']
+        person_name = insert_name.get().upper()
+        person_surname = insert_surname.get().upper()   
+        query = { "name": person_name, "surname" : person_surname}
+        dict_person = col_cert.find_one(query)
+        if type(dict_person) is not type(None):
+            label_frame9.configure(text="ADD A TEST")
+            list_of_tests = dict_person['list_of_tests']
 
+            result = False if test_result.get() == 0 else True
+
+            new_test= func.createTest(option_test_type_variable.get(), str(cal_date.get_date()), 
+                                    insert_location.get(), result, insert_cf_doctor.get().upper())
+
+            list_of_tests.append(new_test)
+            newvalues = { "$set": { "list_of_tests": list_of_tests } }
+            col_cert.update_one(query, newvalues)
+
+        else:
+            label_frame9.configure(text="ERROR")
+        
+
+
+  
     frame9 = Frame(global_var.root_window, bg="white")
-    label_frame9 = Label(frame9, text="FRAME 9 URSO", font="20", background="white", pady=20)
-    label_frame9.pack()
-    go_to_menu = Button(frame9, text="Go to Menu", command=goToMenu)
-    go_to_menu.pack()
+    label_frame9 = Label(frame9, text="ADD A TEST", font="Arial 30", background="white", pady=10)
+    label_frame9.grid(row=16, column=0)
+
+    left_frame = Frame(frame9, background='white')
+    left_frame.grid(row=0, column=0, sticky="nswe")
+
+    right_frame = Frame(frame9, background='white')
+    right_frame.grid(row=0, column=1, sticky="nswe")
+
+    test_result = IntVar()
+
+    #name
+    Label(left_frame, text="Insert the name of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=0, column=0, sticky="nswe")
+    insert_name = Entry(left_frame, font="Arial 10")
+    insert_name.grid(row=1, column=0, sticky="nswe")
+    #surname
+    Label(left_frame, text="Insert the surname of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=2, column=0, sticky="nswe")
+    insert_surname = Entry(left_frame, font="Arial 10")
+    insert_surname.grid(row=3, column=0, sticky="nswe")
+    #test type
+    choices = conf.type_of_test
+    option_test_type_variable = StringVar(left_frame)
+    option_test_type_variable.set(conf.type_of_test[0])
+    Label(left_frame, text="Choose the type of the test:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=4, column=0, sticky="nswe")
+    option_test_type = OptionMenu(left_frame, option_test_type_variable, *choices)
+    option_test_type.grid(row=5, column=0, sticky="nswe")
+    #test date
+    Label(right_frame, text="Insert test date:", font='Arial 10', foreground="green", background="white", pady=5).grid(row=0, column=0, sticky="nswe")
+    cal_date= Calendar(right_frame, date_pattern="yyyy-mm-dd")
+    cal_date.grid(row=1, column=0, sticky="nswe")
+    #location
+    Label(left_frame, text="Insert the location:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=6, column=0, sticky="nswe")
+    insert_location = Entry(left_frame, font="Arial 10")
+    insert_location.grid(row=7, column=0, sticky="nswe")
+    #test result
+    ChkBttn = Checkbutton(left_frame, variable=test_result, text="Tick if the result is positive", font="Arial 15" ,background="white")
+    ChkBttn.grid(row=10, column=0, sticky="nswe")
+    #cf_doctor
+    Label(left_frame, text="Insert the name and the surname of the doctor:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=11, column=0, sticky="nswe")
+    insert_cf_doctor = Entry(left_frame, font="Arial 10")
+    insert_cf_doctor.grid(row=12, column=0, sticky="nswe")
+
+    #add button
+    button_search = Button(left_frame, text="Add Test!", command=addTest, padx=30, pady=30)
+    button_search.grid(row=13, column=0, sticky="nswe")
+
+    go_to_menu = Button(left_frame, text="Go to Menu", command=goToMenu)
+    go_to_menu.grid(row=14, column=0, sticky="nswe")
     return frame9
+    
 
 
 
@@ -380,10 +521,10 @@ def createMenuFrameAlt():
     label_new_3 = Label(frame_menu, text="COMMANDS", font="Arial 20", background="white", pady=30)
     label_new_3.place(x=177, y=100)
 
-    button_frame2 = Button(frame_menu, text="COMMAND 1\nFRAME 2", background="#CE0AFA", command=goToFrame2, pady=15, width=35)
+    button_frame2 = Button(frame_menu, text="COMMAND 1\nADD A VACCINE", background="#CE0AFA", command=goToFrame2, pady=15, width=35)
     button_frame2.place(x=134, y=170)
 
-    button_frame9 = Button(frame_menu, text="COMMAND 3\nFRAME 9", background="#890AFA", command=goToFrame9, pady=15, width=35)
+    button_frame9 = Button(frame_menu, text="COMMAND 3\nADD A TEST", background="#890AFA", command=goToFrame9, pady=15, width=35)
     button_frame9.place(x=134, y=310)
 
     button_frame10 = Button(frame_menu, text="COMMAND 4\nFRAME 10", background="#650AFA", command=goToFrame10, pady=15, width=35)

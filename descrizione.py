@@ -16,7 +16,7 @@ def returnFraseDescrizione():
     list_car.append(f"Possiede degli occhi {rm.choice(colore_occhi)}")
     list_car.append(f"Sfoggia dei capelli {rm.choice(colore_capelli)}")
     list_car.append(f"Ha un fisico {rm.choice(tipo_fisico)}")
-    list_car.append(f"Ha un'altezza pari a circa {abs(int(np.random.normal(170, 30)))} cm")
+    list_car.append(f"Ha un'altezza pari a circa {abs(int(np.random.normal(170, 20)))} cm")
 
     rm.shuffle(list_car)
 
