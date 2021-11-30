@@ -296,17 +296,115 @@ def createFrame3():
 def createFrame4():
     def goToMenu():
         frame4.pack_forget()
+        tree.pack_forget()
         frame_menu.pack()
+        return
+    def searchVaccines():
+        for row in tree.get_children():
+            tree.delete(row)
+
+        tree.pack_forget()
+        tree.pack()
+        tree.heading(1, text="Brand")
+        tree.heading(2, text="Lot")
+        tree.heading(3, text="Date")
+        tree.heading(4, text="Prod. date")
+        tree.heading(5, text="Location")
+        tree.heading(6, text="CF Doctor")
+
+        tree.column(1, width=120)
+        tree.column(2, width=120)
+        tree.column(3, width=120)
+        tree.column(4, width=120)
+        tree.column(5, width=120)
+        tree.column(6, width=120)
+
+        col_cert = global_var.db['Certificate_Collection']
+        person_name = insert_name.get().upper()
+        person_surname = insert_surname.get().upper()
+
+        query = {"name": person_name, "surname": person_surname}
+        dict_person = col_cert.find_one(query)
+
+        #if type(dict_person) is not type(None):
+        #    for vaccination in dict_person['list_of_vaccinations']:
+        #        for key in vaccination:
+        #            print(key)
+        #            print(vaccination[key])
+        if type(dict_person) is not type(None):
+            for vaccination in dict_person['list_of_vaccinations']:
+                tree.insert('', 'end', values=(vaccination['brand'], vaccination['lot'], vaccination['date'], vaccination['production_date'], vaccination['location'], vaccination['cf_doctor']))
+        return
+    def searchTests():
+        for row in tree.get_children():
+            tree.delete(row)
+
+        tree.pack_forget()
+        tree.pack()
+        tree.heading(1, text="Test type")
+        tree.heading(2, text="Date")
+        tree.heading(3, text="Location")
+        tree.heading(4, text="Result")
+        tree.heading(5, text="CF Doctor")
+        tree.heading(6, text="")
+
+        tree.column(1, width=120)
+        tree.column(2, width=120)
+        tree.column(3, width=120)
+        tree.column(4, width=120)
+        tree.column(5, width=120)
+        tree.column(6, width=0)
+
+        col_cert = global_var.db['Certificate_Collection']
+        person_name = insert_name.get().upper()
+        person_surname = insert_surname.get().upper()
+
+        query = {"name": person_name, "surname": person_surname}
+        dict_person = col_cert.find_one(query)
+
+        # if type(dict_person) is not type(None):
+        #    for vaccination in dict_person['list_of_vaccinations']:
+        #        for key in vaccination:
+        #            print(key)
+        #            print(vaccination[key])
+        if type(dict_person) is not type(None):
+            for test in dict_person['list_of_tests']:
+                tree.insert('', 'end', values=(
+                test['test_type'], test['date'], test['location'], test['result'],
+                test['cf_doctor']))
         return
 
     frame4 = Frame(global_var.root_window, bg="white")
-    label_frame4 = Label(frame4, text="FRAME 4 URSO", font="20", background="white", pady=20)
+    label_frame4 = Label(frame4, text="FRAME 4 URSO", font="20", background="white", pady=5)
     label_frame4.pack()
+
+    sub_frame_qr = Frame(frame4, bg='white')
+    sub_frame_insert = Frame(frame4, bg='white')
+    sub_frame_insert.pack()
+
+    # name
+    Label(sub_frame_insert, text="Insert the name of patient:", font='Arial 15', foreground="green", background="white",
+          pady=2).pack()
+    insert_name = Entry(sub_frame_insert, font="Arial 20")
+    insert_name.pack(pady=2)
+    # surname
+    Label(sub_frame_insert, text="Insert the surname of patient:", font='Arial 15', foreground="green",
+          background="white", pady=5).pack()
+    insert_surname = Entry(sub_frame_insert, font="Arial 20")
+    insert_surname.pack(pady=2)
+
+    # add button
+    button_search_vaccines = Button(sub_frame_insert, text="FIND VACCINES!", command=searchVaccines, padx=30, pady=10)
+    button_search_vaccines.pack()
+
+    button_search_tests = Button(sub_frame_insert, text="FIND TESTS!", command=searchTests, padx=30, pady=10)
+    button_search_tests.pack()
+
+    tree = Treeview(frame4, columns = (1,2,3,4,5,6), height = 10, show = "headings")
+
     go_to_menu = Button(frame4, text="Go to Menu", command=goToMenu)
     go_to_menu.pack()
     return frame4
-
-
 
 
 #frame vitobello

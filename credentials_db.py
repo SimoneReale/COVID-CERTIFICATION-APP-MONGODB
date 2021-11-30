@@ -1,2 +1,2 @@
-string_mongodb = "mongodb+srv://SimoneReale:sr@clustercovid.bbrjj.mongodb.net/CovidDatabase?retryWrites=true&w=majority"
-db_name = "CovidDatabase"
+string_mongodb = "mongodb+srv://giuseppe:gu@clustercovid.qfgyu.mongodb.net/Coviddb?retryWrites=true&w=majority"
+db_name = "Coviddb"
