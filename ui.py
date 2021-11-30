@@ -113,28 +113,36 @@ def createFrame1():
 
         query = { "name": person_name, "surname" : person_surname}
         dict_person = col_cert.find_one(query)
-
-        string_person = ""
-        for x in dict_person.items():
-            string_person = string_person + str(x) +"   "
-        
         label_person = Label(sub_frame_qr, text = person_name +" " +person_surname, font="Arial 20", background="white", pady=20)
         label_person.pack()
 
-        img=qr.make(string_person)
-        img = img.resize((600, 600), Image.ANTIALIAS)
-        img = ImageTk.PhotoImage(img)
-        panel = Label(sub_frame_qr, image=img, background='white')
-        panel.image = img
-        panel.pack()
+        if type(dict_person) is not type(None): 
+            string_person = ""
+            for x in dict_person.items():
+                string_person = string_person + str(x) +"   "
+            
+            img=qr.make(string_person)
+            img = img.resize((600, 600), Image.ANTIALIAS)
+            img = ImageTk.PhotoImage(img)
+            panel = Label(sub_frame_qr, image=img, background='white')
+            panel.image = img
+            panel.pack()
+
+            
+
+        else:
+
+            label_person.configure(text= person_name +" " +person_surname +" NOT FOUND", font="Arial 20", foreground='red')
+
 
         sub_frame_insert.pack_forget()
         sub_frame_qr.pack()
+
         return
 
 
     frame1 = Frame(global_var.root_window, bg="white")
-    label_frame1 = Label(frame1, text="GET GREEN PASS", font="20", background="white", pady=20)
+    label_frame1 = Label(frame1, text="GET GREEN PASS", font="Arial 25", background="white", foreground='green' ,pady=10)
     label_frame1.pack()
 
     sub_frame_qr = Frame(frame1, bg='white')
@@ -152,10 +160,10 @@ def createFrame1():
     insert_surname.pack(pady=5)
 
     #add button
-    button_search = Button(sub_frame_insert, text="FIND GREEN PASS!", command=searchGreenPass)
+    button_search = Button(sub_frame_insert, text="FIND GREEN PASS!", command=searchGreenPass, padx=30, pady=30)
     button_search.pack()
 
-    go_to_menu = Button(frame1, text="Go to Menu", command=goToMenu)
+    go_to_menu = Button(frame1, text="Go to Menu", command=goToMenu, padx=30, pady=30)
     go_to_menu.pack()
     return frame1
 
