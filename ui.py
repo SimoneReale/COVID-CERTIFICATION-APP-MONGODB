@@ -65,7 +65,7 @@ def createLoginFrame():
     panel.image = img
     panel.pack()
 
-    label_string = Label(frame_login, text="Insert the string of the db:", font='Arial 15', foreground="green", background="white", pady=20)
+    label_string = Label(frame_login, text="Insert the string of the db:", font='Arial 30', foreground="green", background="white", pady=20)
     label_string.pack()
     insert_string = Entry(frame_login, font="Arial 8", width=100)
     insert_string.insert(0, c_db.string_mongodb)
@@ -445,17 +445,17 @@ def createDatasetFrame():
         col_cert.delete_many({})
 
     createDatasetFrame = Frame(global_var.root_window, bg="white")
-    label_createpopframe = Label(createDatasetFrame, text="CREATE DATASET: NUMBER OF PEOPLE", font="20", background="white", pady=20)
+    label_createpopframe = Label(createDatasetFrame, text="CREATE DATASET: NUMBER OF PEOPLE", font="Arial 30", foreground="green" ,background="white", pady=20)
     label_createpopframe.pack()
-    scale_pop = Scale(createDatasetFrame, from_=10, to=100, orient="horizontal", background="white", length=200, cursor="plus", font="Arial 15")
-    scale_pop.set(50)
+    scale_pop = Scale(createDatasetFrame, from_=10, to=800, orient="horizontal", background="white", length=400, cursor="plus", font="Arial 30")
+    scale_pop.set(400)
     scale_pop.pack(pady=15)
-    button_create = Button(createDatasetFrame, text="CREATE", command=create)
-    button_create.pack()
-    button_create = Button(createDatasetFrame, text="DELETE ALL", command=deleteAll)
-    button_create.pack()
-    go_to_menu = Button(createDatasetFrame, text="Go to Menu", command=goToMenu)
-    go_to_menu.pack()
+    button_create = Button(createDatasetFrame, text="CREATE", command=create, padx=40, pady=40)
+    button_create.pack(padx=30, pady=30)
+    button_create = Button(createDatasetFrame, text="DELETE ALL", background="red" ,command=deleteAll, padx=30, pady=30)
+    button_create.pack(padx= 5, pady = 10)
+    go_to_menu = Button(createDatasetFrame, text="Go to Menu", command=goToMenu, padx=30, pady=30)
+    go_to_menu.pack(padx= 5, pady = 10)
     return createDatasetFrame
 
 
