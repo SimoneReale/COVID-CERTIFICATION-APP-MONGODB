@@ -422,7 +422,109 @@ def createFrame5():
 
     return frame5
 
+def createFrame6():
+    [data, labels] = func.getNumOfVaccinePerPerson(global_var.db['Certificate_Collection'])
+    # [data, labels] = functions.getInfectedPerPlaceType(global_var.db_graph)
 
+    # Wedge properties
+    wp = {'linewidth': 1, 'edgecolor': "green"}
+
+    # Creating autocpt arguments
+    def function(pct, allvalues):
+        absolute = int(pct / 100. * np.sum(allvalues))
+        return "{:.1f}%\n({:d} p)".format(pct, absolute)
+
+    # Creating plot
+    fig, ax = plt.subplots(figsize=(10, 7))
+    wedges, texts, autotexts = ax.pie(data,
+                                      autopct=lambda pct: function(pct, data),
+                                      labels=labels,
+                                      wedgeprops=wp,
+                                      textprops=dict(color="magenta"))
+
+    # Adding legend
+    ax.legend(wedges, labels,
+              title="#doses executed",
+              loc="center left",
+              bbox_to_anchor=(1, 0, 0.5, 1))
+
+    plt.setp(autotexts, size=8, weight="bold")
+    ax.set_title("vaccine doses executed for each person")
+
+    # show plot
+    plt.show()
+
+    return
+
+#get pie chart with numers of tests for each person
+def createFrame7():
+        [data, labels] =func.getNumOfTestPerPerson( global_var.db['Certificate_Collection'])
+        #[data, labels] = functions.getInfectedPerPlaceType(global_var.db_graph)
+
+        # Wedge properties
+        wp = {'linewidth': 1, 'edgecolor': "green"}
+
+        # Creating autocpt arguments
+        def function(pct, allvalues):
+            absolute = int(pct / 100. * np.sum(allvalues))
+            return "{:.1f}%\n({:d} p)".format(pct, absolute)
+
+        # Creating plot
+        fig, ax = plt.subplots(figsize=(10, 7))
+        wedges, texts, autotexts = ax.pie(data,
+                                          autopct=lambda pct: function(pct, data),
+                                          labels=labels,
+                                          wedgeprops=wp,
+                                          textprops=dict(color="magenta"))
+
+        # Adding legend
+        ax.legend(wedges, labels,
+                  title="#tests executed",
+                  loc="center left",
+                  bbox_to_anchor=(1, 0, 0.5, 1))
+
+        plt.setp(autotexts, size=8, weight="bold")
+        ax.set_title("test executed for each person")
+
+        # show plot
+        plt.show()
+
+        return
+
+
+def createFrame8():
+    [data, labels] = func.getNumOfDosesPerVaccine(global_var.db['Certificate_Collection'])
+    # [data, labels] = functions.getInfectedPerPlaceType(global_var.db_graph)
+
+    # Wedge properties
+    wp = {'linewidth': 1, 'edgecolor': "green"}
+
+    # Creating autocpt arguments
+    def function(pct, allvalues):
+        absolute = int(pct / 100. * np.sum(allvalues))
+        return "{:.1f}%\n({:d} d)".format(pct, absolute)
+
+    # Creating plot
+    fig, ax = plt.subplots(figsize=(10, 7))
+    wedges, texts, autotexts = ax.pie(data,
+                                      autopct=lambda pct: function(pct, data),
+                                      labels=labels,
+                                      wedgeprops=wp,
+                                      textprops=dict(color="magenta"))
+
+    # Adding legend
+    ax.legend(wedges, labels,
+              title="vaccine type",
+              loc="center left",
+              bbox_to_anchor=(1, 0, 0.5, 1))
+
+    plt.setp(autotexts, size=8, weight="bold")
+    ax.set_title("number of dosese per vaccine")
+
+    # show plot
+    plt.show()
+
+    return
 
 
 #frame add test
@@ -596,6 +698,13 @@ def createMenuFrameAlt():
         frame_menu.pack_forget()
         frame5.pack()
         return
+
+    def goToFrame6():
+        frame_menu.pack_forget()
+        frame6.pack()
+        return
+
+
     def goToFrame9():
         frame_menu.pack_forget()
         frame9.pack()
@@ -617,6 +726,9 @@ def createMenuFrameAlt():
     button_frame_create_pop = Button(frame_menu, text="Create random dataset", background = "#0AFAE8", command=goToCreateDatasetFrame, pady=15, width=35) #padx=40
     button_frame_create_pop.place(x=-391, y=170)
 
+    button_quit = Button(frame_menu, text="QUIT", background="#FA0027", command=quit, pady=15, width=35)
+    button_quit.place(x = -391, y=240)
+
 
 
     #QUERIES
@@ -635,6 +747,15 @@ def createMenuFrameAlt():
     button_frame5 = Button(frame_menu, text="QUERY 5\nFRAME 5", background="#FA4B0A", command=goToFrame5, pady=15, width=35)
     button_frame5.place(x=-129, y=450)
 
+    button_frame6 = Button(frame_menu, text="QUERY 6\nNUMBER OF VACCINE PER PERSON", background="#FA4B0A", command=createFrame6, pady=15, width=35)
+    button_frame6.place(x=-129, y=520)
+
+    button_frame7 = Button(frame_menu, text="QUERY 7\nNUMBER OF TEST PER PERSON", background="#FA4B0A", command=createFrame7, pady=15, width=35)
+    button_frame7.place(x=-129, y=590)
+
+    button_frame8 = Button(frame_menu, text="QUERY 8\nNUMBER OF DOSES PER VACCINE", background="#FA4B0A",command=createFrame8, pady=15, width=35)
+    button_frame8.place(x=-129, y=660)
+
 
     #COMMANDS
     label_new_3 = Label(frame_menu, text="COMMANDS", font="Arial 20", background="white", pady=30)
@@ -650,8 +771,7 @@ def createMenuFrameAlt():
     button_frame10.place(x=134, y=380)
 
 
-    button_quit = Button(frame_menu, text="QUIT", background="#FA0027", command=quit, pady=15, width=35)
-    button_quit.place(x = -130, y=600)
+
 
     return frame_menu
 
@@ -672,6 +792,8 @@ if __name__ == "__main__":
     frame3 = createFrame3()
     frame4 = createFrame4()
     frame5 = createFrame5()
+    #frame6 = createFrame6()
+    #frame7 = createFrame7()
     frame9 = createFrame9()
     frame10 = createFrame10()
 

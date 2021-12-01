@@ -94,6 +94,82 @@ def returnCertificateExpirationDate(dict_person):
         return validity_date
 
 
+def getNumOfTestPerPerson(col_cert):
+    results = col_cert.aggregate([
+        {
+            "$project":{
+                "size_of_tests_array":{
+                    "$cond": { "if": { "$gte": [{ "$size": "$list_of_tests" }, 5 ] }, "then": ">5", "else": {"$toString":{ "$size": "$list_of_tests" }}}}
+            }
+        },
+        {
+            "$group":{
+                "_id":"$size_of_tests_array",
+                "count": {"$sum": 1}
+            }
+        },
+        {
+        "$sort": {"_id": 1}
+        }
+    ])
+    data=[]
+    labels=[]
+    if type(results) is not type(None):
+        for result in results:
+            labels.append(result["_id"])
+            data.append(result["count"])
+    return [data,labels]
+
+def getNumOfVaccinePerPerson(col_cert):
+    results = col_cert.aggregate([
+        {
+            "$project":{
+                "size_of_vaccines_array":{
+                    "$cond": { "if": { "$gte": [{ "$size": "$list_of_vaccinations" }, 5 ] }, "then": ">5", "else": {"$toString":{ "$size": "$list_of_vaccinations" }}}}
+            }
+        },
+        {
+            "$group":{
+                "_id":"$size_of_vaccines_array",
+                "count": {"$sum": 1}
+            }
+        },
+        {
+        "$sort": {"_id": 1}
+        }
+    ])
+    data=[]
+    labels=[]
+    if type(results) is not type(None):
+        for result in results:
+            labels.append(result["_id"])
+            data.append(result["count"])
+    return [data,labels]
+
+def getNumOfDosesPerVaccine(col_cert):
+    results = col_cert.aggregate([
+        {
+            "$unwind":{
+                "path": "$list_of_vaccinations",
+                "preserveNullAndEmptyArrays": False
+            }
+        },
+
+        {
+            "$group":{
+                "_id":"$list_of_vaccinations.brand",
+                "count": {"$sum": 1}
+            }
+        }
+    ])
+    data=[]
+    labels=[]
+    if type(results) is not type(None):
+        for result in results:
+            labels.append(result["_id"])
+            data.append(result["count"])
+    return [data,labels]
+
 
 def updateValidity(certificate_collection, name, surname):
     query = { "name": name, "surname" : surname}
