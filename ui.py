@@ -53,7 +53,7 @@ def createLoginFrame():
     frame_login = Frame(global_var.root_window, bg = "white")
     label_error = Label(frame_login, text="Login Error", font='Arial 25', background="white", foreground="red")
 
-    img = Image.open('images\\covid.jpg')
+    img = Image.open('images\\green_pass.jpg')
     img = img.resize((200, 200), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
     panel = Label(frame_login, image=img, background='white')
@@ -66,9 +66,9 @@ def createLoginFrame():
     insert_string.insert(0, c_db.string_mongodb)
     insert_string.pack(pady=20)
 
-    label_name = Label(frame_login, text="Insert the string of the db:", font='Arial 30', foreground="green", background="white", pady=20)
+    label_name = Label(frame_login, text="Insert the name of the db:", font='Arial 30', foreground="green", background="white", pady=20)
     label_name.pack()
-    insert_db_name = Entry(frame_login, font="Arial 8", width=100)
+    insert_db_name = Entry(frame_login, font="Arial 20", width=30)
     insert_db_name.insert(0, c_db.db_name)
     insert_db_name.pack(pady=20)
 
@@ -128,8 +128,22 @@ def createFrame1():
                     string_person = string_person + str(key) +" : " +str(dict_person[key]) +"                                                        "
                 
             
-            img=qr.make(string_person)
-            img = img.resize((600, 600), Image.ANTIALIAS)
+        
+
+            
+            qr_class = qr.QRCode(
+                                version=1,
+                                error_correction=qr.constants.ERROR_CORRECT_L,
+                                box_size=10,
+                                border=1,
+                                )
+            qr_class.add_data(string_person)
+            qr_class.make(fit=True)
+
+            img = qr_class.make_image(fill_color="white", back_color="black")
+
+
+            img = img.resize((500, 500), Image.ANTIALIAS)
             img = ImageTk.PhotoImage(img)
             panel = Label(sub_frame_qr, image=img, background='white')
             panel.image = img
@@ -723,7 +737,7 @@ def createMenuFrameAlt():
     label_new_1 = Label(frame_menu, text="MANAGEMENT", font="Arial 20", background="white", pady=30)
     label_new_1.place(x=-363, y=100)
 
-    button_frame_create_pop = Button(frame_menu, text="Create random dataset", background = "#0AFAE8", command=goToCreateDatasetFrame, pady=15, width=35) #padx=40
+    button_frame_create_pop = Button(frame_menu, text="CREATE/DELETE RANDOM DATASET", background = "#0AFAE8", command=goToCreateDatasetFrame, pady=15, width=35) #padx=40
     button_frame_create_pop.place(x=-391, y=170)
 
     button_quit = Button(frame_menu, text="QUIT", background="#FA0027", command=quit, pady=15, width=35)
@@ -741,7 +755,7 @@ def createMenuFrameAlt():
     button_frame3 = Button(frame_menu, text="QUERY 3\nFRAME 3", background="#FA860A", command=goToFrame3, pady=15, width=35)
     button_frame3.place(x=-129, y=310)
 
-    button_frame4 = Button(frame_menu, text="QUERY 4\nFRAME 4", background="#FA700A", command=goToFrame4, pady=15, width=35)
+    button_frame4 = Button(frame_menu, text="QUERY 4\nSEARCH VACCINES/TESTS FOR EACH PERSON", background="#FA700A", command=goToFrame4, pady=15, width=35)
     button_frame4.place(x=-129, y=380)
 
     button_frame5 = Button(frame_menu, text="QUERY 5\nFRAME 5", background="#FA4B0A", command=goToFrame5, pady=15, width=35)
