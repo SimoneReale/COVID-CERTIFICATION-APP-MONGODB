@@ -14,6 +14,7 @@ import credentials_db as c_db
 import qrcode as qr
 import numpy as np
 import functions as func
+import pprint
 
 
 
@@ -426,15 +427,53 @@ def createFrame5():
     def goToMenu():
         frame5.pack_forget()
         frame_menu.pack()
+        tree.pack_forget()
+        return
+
+    def getInput():
+        for row in tree.get_children():
+            tree.delete(row)
+
+        tree.pack_forget()
+        tree.pack()
+        tree.heading(1, text="Name")
+        tree.heading(2, text="Surname")
+        tree.heading(3, text="Birth Date")
+        tree.column(1, width = 100)
+        tree.column(2, width = 100)
+        tree.column(3, width = 100)
+
+        col_cert = global_var.db['Certificate_Collection']
+        lot = insert_lot.get()
+        query = {"list_of_vaccinations" : { "$elemMatch" : { "lot" :  int(lot)  }}}
+        dict_person = col_cert.find(query)
+
+        if type(dict_person) is not type(None):
+            for person in dict_person:
+                tree.insert('', 'end', values=(person['name'], person['surname'], person['birthdate'] ))
+                print(person[0], person[1], person[2])
         return
 
     frame5 = Frame(global_var.root_window, bg="white")
-    label_frame5 = Label(frame5, text="FRAME 5 VITOBELLO", font="20", background="white", pady=20)
+    label_frame5 = Label(frame5, text="FIND PEOPLE WHO WERE VACCINATED WITH LOT", font="20", background="white", pady=20)
     label_frame5.pack()
+
+    #sub_frame_qr = Frame(frame5, bg='white')
+    sub_frame_insert = Frame(frame5, bg='white')
+    sub_frame_insert.pack()
+    Label(sub_frame_insert, text="Insert the lot value (7 int values):", font='Arial 15', foreground="green", background="white", pady=2).pack()
+    insert_lot = Entry(sub_frame_insert, font="Arial 20")
+    insert_lot.pack(pady=2)    
+    button_search = Button(sub_frame_insert, text="FIND PEOPLE!", command=getInput, padx=30, pady=10)
+    button_search.pack()
+
+    tree = Treeview(frame5, columns = (1,2,3), height = 10, show = "headings")
+
     go_to_menu = Button(frame5, text="Go to Menu", command=goToMenu)
     go_to_menu.pack()
 
     return frame5
+
 
 def createFrame6():
     [data, labels] = func.getNumOfVaccinePerPerson(global_var.db['Certificate_Collection'])
@@ -758,7 +797,7 @@ def createMenuFrameAlt():
     button_frame4 = Button(frame_menu, text="QUERY 4\nSEARCH VACCINES/TESTS FOR EACH PERSON", background="#FA700A", command=goToFrame4, pady=15, width=35)
     button_frame4.place(x=-129, y=380)
 
-    button_frame5 = Button(frame_menu, text="QUERY 5\nFRAME 5", background="#FA4B0A", command=goToFrame5, pady=15, width=35)
+    button_frame5 = Button(frame_menu, text="QUERY 5\SEARCH PEOPLE VACCINATED WITH LOTS", background="#FA4B0A", command=goToFrame5, pady=15, width=35)
     button_frame5.place(x=-129, y=450)
 
     button_frame6 = Button(frame_menu, text="QUERY 6\nNUMBER OF VACCINE PER PERSON", background="#FA4B0A", command=createFrame6, pady=15, width=35)
@@ -781,7 +820,7 @@ def createMenuFrameAlt():
     button_frame9 = Button(frame_menu, text="COMMAND 3\nADD A TEST", background="#890AFA", command=goToFrame9, pady=15, width=35)
     button_frame9.place(x=134, y=310)
 
-    button_frame10 = Button(frame_menu, text="COMMAND 4\nFRAME 10", background="#650AFA", command=goToFrame10, pady=15, width=35)
+    button_frame10 = Button(frame_menu, text="COMMAND 4\nUPDATE AUTHORIZED BODY ", background="#650AFA", command=goToFrame10, pady=15, width=35)
     button_frame10.place(x=134, y=380)
 
 
