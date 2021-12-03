@@ -888,7 +888,7 @@ def createMenuFrameAlt():
     button_frame4 = Button(frame_menu, text="QUERY 4\nSEARCH VACCINES/TESTS FOR EACH PERSON", background="#FA700A", command=goToFrame4, pady=15, width=35)
     button_frame4.place(x=-129, y=380)
 
-    button_frame5 = Button(frame_menu, text="QUERY 5\SEARCH PEOPLE VACCINATED WITH LOTS", background="#FA4B0A", command=goToFrame5, pady=15, width=35)
+    button_frame5 = Button(frame_menu, text="QUERY 5\nSEARCH PEOPLE VACCINATED WITH LOTS", background="#FA4B0A", command=goToFrame5, pady=15, width=35)
     button_frame5.place(x=-129, y=450)
 
     button_frame6 = Button(frame_menu, text="QUERY 6\nNUMBER OF VACCINE PER PERSON", background="#FA4B0A", command=createFrame6, pady=15, width=35)
