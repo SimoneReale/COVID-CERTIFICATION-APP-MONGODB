@@ -648,6 +648,93 @@ def createFrame10():
     return frame10
 
 
+def createFrame11():
+    def goToMenu():
+        label_frame11.configure(text="ADD AN AUTHORIZED BODY", foreground="black")
+        frame11.pack_forget()
+        frame_menu.pack()
+        return
+
+    def addAuthBody():
+        col_authBody = global_var.db['AuthorizedBodies_Collection']
+        new_auth_body = func.createGoodAuthorizedBody(name=insert_name.get(), piva=insert_piva.get(), type=insert_type.get(),
+                                                          address=insert_addr.get(), gps=insert_location.get(), department=insert_dept.get(),
+                                                          description=insert_description.get(), doctors=insert_docs.get())
+        col_authBody.insert_one(new_auth_body)
+
+    frame11 = Frame(global_var.root_window, bg="white")
+    label_frame11 = Label(frame11, text="ADD AN AUTHORIZED BODY", font="Arial 30", background="white", pady=10)
+    label_frame11.grid(row=15, column=0)
+
+    left_frame = Frame(frame11, background='white')
+    left_frame.grid(row=0, column=0, sticky="nswe")
+
+    right_frame = Frame(frame11, background='white')
+    right_frame.grid(row=0, column=1, sticky="nswe")
+
+    # name
+    Label(left_frame, text="Insert the name of the auth. body:", font='Arial 10', foreground="green", background="white",
+          pady=5).grid(row=0, column=0, sticky="nswe")
+    insert_name = Entry(left_frame, font="Arial 10")
+    insert_name.grid(row=1, column=0, sticky="nswe")
+    # piva
+    Label(left_frame, text="Insert the 'partita IVA':", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=2, column=0, sticky="nswe")
+    insert_piva = Entry(left_frame, font="Arial 10")
+    insert_piva.grid(row=3, column=0, sticky="nswe")
+    # type
+    Label(left_frame, text="Insert the type of entity:", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=4, column=0, sticky="nswe")
+    insert_type = Entry(left_frame, font="Arial 10")
+    insert_type.grid(row=5, column=0, sticky="nswe")
+    # address
+    Label(left_frame, text="Insert the address:", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=6, column=0, sticky="nswe")
+    insert_addr = Entry(left_frame, font="Arial 10")
+    insert_addr.grid(row=7, column=0, sticky="nswe")
+    # location
+    Label(left_frame, text="Insert the location (GPS):", font='Arial 10', foreground="green", background="white",
+          pady=5).grid(row=8, column=0, sticky="nswe")
+    insert_location = Entry(left_frame, font="Arial 10")
+    insert_location.grid(row=9, column=0, sticky="nswe")
+    # department
+    Label(left_frame, text="Insert the department issuing vaccine:", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=10, column=0, sticky="nswe")
+    insert_dept = Entry(left_frame, font="Arial 10")
+    insert_dept.grid(row=11, column=0, sticky="nswe")
+    # description
+    Label(left_frame, text="Insert the description:", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=12, column=0, sticky="nswe")
+    insert_description = Entry(left_frame, font="Arial 10")
+    insert_description.grid(row=13, column=0, sticky="nswe")
+    # doctors
+    Label(left_frame, text="Insert the doctors (separated by ';' charachter):", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=14, column=0, sticky="nswe")
+    insert_docs = Entry(left_frame, font="Arial 10")
+    insert_docs.grid(row=15, column=0, sticky="nswe")
+
+    # add button
+    button_search = Button(left_frame, text="Add Authorized Body!", command=addAuthBody, padx=30, pady=30)
+    button_search.grid(row=16, column=0, sticky="nswe")
+
+    go_to_menu = Button(left_frame, text="Go to Menu", command=goToMenu)
+    go_to_menu.grid(row=17, column=0, sticky="nswe")
+    return frame11
+
+"""def createFrame11():
+    def goToMenu():
+        frame11.pack_forget()
+        frame_menu.pack()
+        return
+
+    frame11 = Frame(global_var.root_window, bg="white")
+    label_frame11 = Label(frame11, text="FRAME 11 URSO", font="20", background="white", pady=20)
+    label_frame11.pack()
+    go_to_menu = Button(frame11, text="Go to Menu", command=goToMenu)
+    go_to_menu.pack()
+    return frame11
+"""
+
 
 def createDatasetFrame():
     def goToMenu():
@@ -727,6 +814,10 @@ def createMenuFrameAlt():
         frame_menu.pack_forget()
         frame10.pack()
 
+    def goToFrame11():
+        frame_menu.pack_forget()
+        frame11.pack()
+
     frame_menu = Frame(global_var.root_window, height = 1200, width = 1200, bg="white", padx=400)
     label_menu = Label(frame_menu, text="MENU", font="Arial 30", background="white", pady=40)
     label_menu.place(x=-70, y=0)
@@ -784,6 +875,9 @@ def createMenuFrameAlt():
     button_frame10 = Button(frame_menu, text="COMMAND 4\nFRAME 10", background="#650AFA", command=goToFrame10, pady=15, width=35)
     button_frame10.place(x=134, y=380)
 
+    button_frame11 = Button(frame_menu, text="COMMAND 5\nFRAME 11", background="#650AFA", command=goToFrame11, pady=15, width=35)
+    button_frame11.place(x=134, y=450)
+
 
 
 
@@ -810,5 +904,6 @@ if __name__ == "__main__":
     #frame7 = createFrame7()
     frame9 = createFrame9()
     frame10 = createFrame10()
+    frame11 = createFrame11()
 
     global_var.root_window.mainloop()

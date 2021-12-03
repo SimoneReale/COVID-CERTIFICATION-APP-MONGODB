@@ -28,6 +28,11 @@ def createPerson(name, surname, birthdate, details, list_of_vaccinations, list_o
     dict_person['validity_date'] = str(validity_date)
     return dict_person
 
+def createGoodAuthorizedBody(name, piva, type, address, gps, department, description, doctors):
+    doctors_array = doctors.split(";")
+    dict_auth = {'active' : True, 'name': name, 'piva': piva, 'type' : type, 'location' : address, 'gps': gps, 'department': department, 'description': description, 'list_of_doctors': doctors_array}
+    return dict_auth
+
 
 
 
