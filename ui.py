@@ -683,13 +683,20 @@ def createFrame10():
         col_authBody = global_var.db['AuthorizedBodies_Collection']
         name=insert_name.get().lower()
         type=insert_type.get().lower()
-        description=insert_description.get().lower()
-        if insert_active.get() is not None:
-            active=insert_active.get().lower()
-            updateBody = func.makeTheMagic(name, type, description, active)
-        else: 
-            updateBody = func.makeTheMagic(name, type, description)
-        col_authBody.updateOne(updateBody)
+        type = type[0].upper() + type[1:].lower()
+        description=insert_description.get().lower() + "\n"
+        if insert_active.get().lower() == "true" or insert_active.get().lower() == "false":
+            if insert_active.get().lower() == "true" :
+                active = True
+            if insert_active.get().lower() == "false" :
+                active = False
+            filter = { "location" : name, "type" : type}
+            values = [{ "$set" : { "active" : active, "description" :  {"$concat": [ {"$ifNull" : ["$description", ""]}, description ]} }}]
+
+        else:
+            filter = {"location" : name, "type" : type}
+            values = [{ "$set" : { "description" :  {"$concat": [ {"$ifNull" : ["$description", ""]}, description ]}}}]
+        col_authBody.update_one(filter, values)
 
     frame10 = Frame(global_var.root_window, bg="white")
     label_frame10 = Label(frame10, text="UPDATE STATE OF AUTHORIZED BODY", font="Arial 30", background="white", pady=10)
@@ -722,7 +729,7 @@ def createFrame10():
     insert_active = Entry(left_frame, font="Arial 10")
     insert_active.grid(row=13, column=0, sticky="nswe")
     # add button
-    button_search = Button(left_frame, text="Add Authorized Body!", command=updateAuthBody, padx=30, pady=30)
+    button_search = Button(left_frame, text="Update Authorized Body!", command=updateAuthBody, padx=30, pady=30)
     button_search.grid(row=16, column=0, sticky="nswe")
 
     go_to_menu = Button(left_frame, text="Go to Menu", command=goToMenu)
