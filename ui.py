@@ -292,6 +292,48 @@ def createFrame2():
 
 #frame somaschini
 def createFrame3():
+    def getLocationWithMostVaccines():
+        for row in treeVax.get_children():
+            treeVax.delete(row)
+
+        treeVax.pack_forget()
+        treeVax.pack(padx=30, pady=10)
+        treeVax.heading(1, text="Type")
+        treeVax.heading(2, text="Address")
+        treeVax.heading(3, text="# of vaccines")
+
+        treeVax.column(1, width=120)
+        treeVax.column(2, width=120)
+        treeVax.column(3, width=120)
+
+        for line in func.getLocationWithMostVaccines(global_var.db['Certificate_Collection'], global_var.db['AuthorizedBodies_Collection']):
+            treeVax.insert('', 'end', values=(line['Type'], line['Address'], line['NofVax']))
+
+        return 
+
+    def getLocationWithMostTest():
+        for row in treeTest.get_children():
+            treeTest.delete(row)
+
+        treeTest.pack_forget()
+        treeTest.pack(padx=30, pady=10)
+        treeTest.heading(1, text="Type")
+        treeTest.heading(2, text="Address")
+        treeTest.heading(3, text="# of tests")
+
+        treeTest.column(1, width=120)
+        treeTest.column(2, width=120)
+        treeTest.column(3, width=120)
+
+        for line in func.getLocationWithMostTests(global_var.db['Certificate_Collection'], global_var.db['AuthorizedBodies_Collection']):
+            treeTest.insert('', 'end', values=(line['Type'], line['Address'], line['NofTest']))
+
+        return
+
+    def getLocations():
+        getLocationWithMostVaccines()
+        getLocationWithMostTest()
+    
 
     def goToMenu():
         frame3.pack_forget()
@@ -299,10 +341,18 @@ def createFrame3():
         return
 
     frame3 = Frame(global_var.root_window, bg="white")
-    label_frame3 = Label(frame3, text="FRAME 3 SOMASCHINI", font="20", background="white", pady=20)
+    label_frame3 = Label(frame3, text="QUERY 3: LOCATIONS WITH MOST VACCINES/TESTS", font="20", background="white", pady=20)
     label_frame3.pack()
+
+    button_create = Button(frame3, text="Find", command=getLocations, padx=20, pady=10)
+    button_create.pack(padx=30, pady=10)
+
+    treeVax = Treeview(frame3, columns = (1,2,3), height = 3, show = "headings")
+    treeTest = Treeview(frame3, columns = (1,2,3), height = 3, show = "headings")
+
     go_to_menu = Button(frame3, text="Go to Menu", command=goToMenu)
-    go_to_menu.pack()
+    go_to_menu.pack(padx=30, pady=10)
+    
     return frame3
 
 
@@ -824,6 +874,55 @@ def createFrame11():
     return frame11
 """
 
+# Frame Somaschini 2
+def createFrame12():
+    def addPerson():
+        if entries['First Name'].get() == "" or entries['Last Name'].get() == "" or entries['Birthdate'].get_date() == "" or entries['Details'].get() == "":
+            log = "Some entries are missing"
+        else:
+            log = func.addPerson(
+                    global_var.db['Certificate_Collection'],
+                    entries['First Name'].get().upper(),
+                    entries['Last Name'].get().upper(),
+                    entries['Birthdate'].get_date(),
+                    entries['Details'].get()
+            )
+
+        label_output.config(text=log)
+        label_output.pack()
+        return
+
+    def goToMenu():
+        frame12.pack_forget()
+        label_output.pack_forget()
+        frame_menu.pack()
+        return
+
+    frame12 = Frame(global_var.root_window, bg="white")
+    label_frame12 = Label(frame12, text="COMMAND: ADD A PERSON", font="20", background="white", pady=20)
+    label_frame12.pack()
+
+    entries = {
+        "First Name":   Entry(frame12),
+        "Last Name":    Entry(frame12),
+        "Birthdate":    Calendar(frame12, date_pattern="yyyy-mm-dd"),
+        "Details":      Entry(frame12)
+    }
+    for label, entry in entries.items():
+        Label(frame12, text = label).pack()
+        entry.pack(pady=5)
+
+    add_contact = Button(frame12, text="Add Contact", command=addPerson)
+    add_contact.pack(pady=5)
+
+    go_to_menu = Button(frame12, text="Go to Menu", command=goToMenu)
+    go_to_menu.pack(pady=5)
+
+    label_output = Label(frame12, text="", font='Arial 14', background="white", foreground="black")
+    label_output.pack()
+
+    return frame12
+
 
 def createDatasetFrame():
     def goToMenu():
@@ -907,6 +1006,10 @@ def createMenuFrameAlt():
         frame_menu.pack_forget()
         frame11.pack()
 
+    def goToFrame12():
+        frame_menu.pack_forget()
+        frame12.pack()
+
     frame_menu = Frame(global_var.root_window, height = 1200, width = 1200, bg="white", padx=400)
     label_menu = Label(frame_menu, text="MENU", font="Arial 30", background="white", pady=40)
     label_menu.place(x=-70, y=0)
@@ -932,7 +1035,7 @@ def createMenuFrameAlt():
     button_frame1 = Button(frame_menu, text="QUERY 1\nGET GREEN PASS 1", background="#FACB0A", command=goToFrame1, pady=15, width=35)
     button_frame1.place(x=-129, y=170)
 
-    button_frame3 = Button(frame_menu, text="QUERY 3\nFRAME 3", background="#FA860A", command=goToFrame3, pady=15, width=35)
+    button_frame3 = Button(frame_menu, text="QUERY 3\nGET LOCATIONS WITH MOST VACCINES/TESTS", background="#FA860A", command=goToFrame3, pady=15, width=35)
     button_frame3.place(x=-129, y=310)
 
     button_frame4 = Button(frame_menu, text="QUERY 4\nSEARCH VACCINES/TESTS FOR EACH PERSON", background="#FA700A", command=goToFrame4, pady=15, width=35)
@@ -967,8 +1070,8 @@ def createMenuFrameAlt():
     button_frame11 = Button(frame_menu, text="COMMAND 5\nFRAME 11", background="#650AFA", command=goToFrame11, pady=15, width=35)
     button_frame11.place(x=134, y=450)
 
-
-
+    button_frame12 = Button(frame_menu, text="COMMAND 6\nADD A PERSON", background="#650AFA", command=goToFrame12, pady=15, width=35)
+    button_frame12.place(x=134, y=520)
 
     return frame_menu
 
@@ -994,5 +1097,6 @@ if __name__ == "__main__":
     frame9 = createFrame9()
     frame10 = createFrame10()
     frame11 = createFrame11()
+    frame12 = createFrame12()
 
     global_var.root_window.mainloop()
