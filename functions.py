@@ -8,6 +8,7 @@ import datetime
 import random as rm
 import traceback
 import descrizione as descr
+from codicefiscale import codicefiscale
 
 
 def createAuthorizedBody(active, location, type, list_of_doctors):
@@ -34,6 +35,15 @@ def createGoodAuthorizedBody(name, piva, type, address, gps, department, descrip
     return dict_auth
 
 
+def returnCF(surname,name,birthdate):
+    cities = ["Aosta", "Torino", "Genova", "Milano", "Trento", "Venezia", "Trieste", "Bologna", "Firenze", "Ancona", "Perugia", "Roma", "L'Aquila", "Campobasso", "Napoli", "Bari", "Potenza", "Catanzaro", "Palermo", "Cagliari"]
+    birthdate = birthdate.replace("-", "/")
+    city = cities[rm.randrange(0,19)]
+    if name[len(name)-1] == 'a' or name[len(name)-1] == 'e':
+        sex = "F"
+    else :
+        sex = "M"
+    return codicefiscale.encode(surname=surname, name=name, sex=sex, birthdate=birthdate, birthplace=city)
 
 
 def returnRandomDate():
@@ -50,8 +60,6 @@ def returnRandomBirthDate():
     random_birthdate = conf.start_birthdate + datetime.timedelta(days=random_number_of_days)
 
     return random_birthdate
-
-
 
 def returnCertificateExpirationDate(dict_person):
 

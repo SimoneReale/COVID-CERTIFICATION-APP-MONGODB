@@ -679,11 +679,54 @@ def createFrame10():
         frame_menu.pack()
         return
 
+    def updateAuthBody():
+        col_authBody = global_var.db['AuthorizedBodies_Collection']
+        name=insert_name.get().lower()
+        type=insert_type.get().lower()
+        description=insert_description.get().lower()
+        if insert_active.get() is not None:
+            active=insert_active.get().lower()
+            updateBody = func.makeTheMagic(name, type, description, active)
+        else: 
+            updateBody = func.makeTheMagic(name, type, description)
+        col_authBody.updateOne(updateBody)
+
     frame10 = Frame(global_var.root_window, bg="white")
-    label_frame10 = Label(frame10, text="FRAME 10 VITOBELLO", font="20", background="white", pady=20)
-    label_frame10.pack()
-    go_to_menu = Button(frame10, text="Go to Menu", command=goToMenu)
-    go_to_menu.pack()
+    label_frame10 = Label(frame10, text="UPDATE STATE OF AUTHORIZED BODY", font="Arial 30", background="white", pady=10)
+    label_frame10.grid(row=15, column=0)
+
+    left_frame = Frame(frame10, background='white')
+    left_frame.grid(row=0, column=0, sticky="nswe")
+
+    right_frame = Frame(frame10, background='white')
+    right_frame.grid(row=0, column=1, sticky="nswe")
+
+    # name
+    Label(left_frame, text="Select the name of the auth. body to update:", font='Arial 10', foreground="green", background="white",
+          pady=5).grid(row=0, column=0, sticky="nswe")
+    insert_name = Entry(left_frame, font="Arial 10")
+    insert_name.grid(row=1, column=0, sticky="nswe")
+    # type
+    Label(left_frame, text="Select the type of entity to update:", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=4, column=0, sticky="nswe")
+    insert_type = Entry(left_frame, font="Arial 10")
+    insert_type.grid(row=5, column=0, sticky="nswe")
+    # description
+    Label(left_frame, text="Insert the description TO CONCAT:", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=8, column=0, sticky="nswe")
+    insert_description = Entry(left_frame, font="Arial 10")
+    insert_description.grid(row=9, column=0, sticky="nswe")
+    # active
+    Label(left_frame, text="is the body active?(true/false, not mandatory):", font='Arial 10', foreground="green",
+          background="white", pady=5).grid(row=12, column=0, sticky="nswe")
+    insert_active = Entry(left_frame, font="Arial 10")
+    insert_active.grid(row=13, column=0, sticky="nswe")
+    # add button
+    button_search = Button(left_frame, text="Add Authorized Body!", command=updateAuthBody, padx=30, pady=30)
+    button_search.grid(row=16, column=0, sticky="nswe")
+
+    go_to_menu = Button(left_frame, text="Go to Menu", command=goToMenu)
+    go_to_menu.grid(row=17, column=0, sticky="nswe")
     return frame10
 
 
@@ -911,7 +954,7 @@ def createMenuFrameAlt():
     button_frame9 = Button(frame_menu, text="COMMAND 3\nADD A TEST", background="#890AFA", command=goToFrame9, pady=15, width=35)
     button_frame9.place(x=134, y=310)
 
-    button_frame10 = Button(frame_menu, text="COMMAND 4\nUPDATE AUTHORIZED BODY ", background="#650AFA", command=goToFrame10, pady=15, width=35)
+    button_frame10 = Button(frame_menu, text="COMMAND 4\nUPDATE STATE OF AUTHORIZED BODY ", background="#650AFA", command=goToFrame10, pady=15, width=35)
     button_frame10.place(x=134, y=380)
 
     button_frame11 = Button(frame_menu, text="COMMAND 5\nFRAME 11", background="#650AFA", command=goToFrame11, pady=15, width=35)
