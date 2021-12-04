@@ -292,6 +292,48 @@ def createFrame2():
 
 #frame somaschini
 def createFrame3():
+    def getLocationWithMostVaccines():
+        for row in treeVax.get_children():
+            treeVax.delete(row)
+
+        treeVax.pack_forget()
+        treeVax.pack(padx=30, pady=10)
+        treeVax.heading(1, text="Type")
+        treeVax.heading(2, text="Address")
+        treeVax.heading(3, text="# of vaccines")
+
+        treeVax.column(1, width=120)
+        treeVax.column(2, width=120)
+        treeVax.column(3, width=120)
+
+        for line in func.getLocationWithMostVaccines(global_var.db['Certificate_Collection'], global_var.db['AuthorizedBodies_Collection']):
+            treeVax.insert('', 'end', values=(line['Type'], line['Address'], line['NofVax']))
+
+        return 
+
+    def getLocationWithMostTest():
+        for row in treeTest.get_children():
+            treeTest.delete(row)
+
+        treeTest.pack_forget()
+        treeTest.pack(padx=30, pady=10)
+        treeTest.heading(1, text="Type")
+        treeTest.heading(2, text="Address")
+        treeTest.heading(3, text="# of tests")
+
+        treeTest.column(1, width=120)
+        treeTest.column(2, width=120)
+        treeTest.column(3, width=120)
+
+        for line in func.getLocationWithMostTests(global_var.db['Certificate_Collection'], global_var.db['AuthorizedBodies_Collection']):
+            treeTest.insert('', 'end', values=(line['Type'], line['Address'], line['NofTest']))
+
+        return
+
+    def getLocations():
+        getLocationWithMostVaccines()
+        getLocationWithMostTest()
+    
 
     def goToMenu():
         frame3.pack_forget()
@@ -299,10 +341,18 @@ def createFrame3():
         return
 
     frame3 = Frame(global_var.root_window, bg="white")
-    label_frame3 = Label(frame3, text="FRAME 3 SOMASCHINI", font="20", background="white", pady=20)
+    label_frame3 = Label(frame3, text="QUERY 3: LOCATIONS WITH MOST VACCINES/TESTS", font="20", background="white", pady=20)
     label_frame3.pack()
+
+    button_create = Button(frame3, text="Find", command=getLocations, padx=20, pady=10)
+    button_create.pack(padx=30, pady=10)
+
+    treeVax = Treeview(frame3, columns = (1,2,3), height = 3, show = "headings")
+    treeTest = Treeview(frame3, columns = (1,2,3), height = 3, show = "headings")
+
     go_to_menu = Button(frame3, text="Go to Menu", command=goToMenu)
-    go_to_menu.pack()
+    go_to_menu.pack(padx=30, pady=10)
+    
     return frame3
 
 
@@ -925,7 +975,7 @@ def createMenuFrameAlt():
     button_frame1 = Button(frame_menu, text="QUERY 1\nGET GREEN PASS 1", background="#FACB0A", command=goToFrame1, pady=15, width=35)
     button_frame1.place(x=-129, y=170)
 
-    button_frame3 = Button(frame_menu, text="QUERY 3\nFRAME 3", background="#FA860A", command=goToFrame3, pady=15, width=35)
+    button_frame3 = Button(frame_menu, text="QUERY 3\nGET LOCATIONS WITH MOST VACCINES/TESTS", background="#FA860A", command=goToFrame3, pady=15, width=35)
     button_frame3.place(x=-129, y=310)
 
     button_frame4 = Button(frame_menu, text="QUERY 4\nSEARCH VACCINES/TESTS FOR EACH PERSON", background="#FA700A", command=goToFrame4, pady=15, width=35)

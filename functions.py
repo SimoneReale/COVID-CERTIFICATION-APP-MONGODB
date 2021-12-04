@@ -194,6 +194,43 @@ def updateValidity(certificate_collection, name, surname):
     return
 
 
+def getLocationWithMostVaccines(certs_col, auth_bodies_col):
+    bestLocations = certs_col.aggregate([
+        {"$unwind" : "$list_of_vaccinations"},
+        {"$group": {
+            "_id": { "location" : "$list_of_vaccinations.location" },
+            "count": {"$sum":  1}
+        }},
+        {"$sort": {"count": -1}},
+        {"$limit": 3}
+    ])
+    # Draft per fare una sola query -> Come matchare luoghi con la stessa via ma tipo diverso?
+    """locations = [location['_id']['location'] for location in bestLocations]
+    authBody_type = auth_bodies_col.find({"location": {"$in": [locations]}}, {"type": 1})
+    authBody_type = list(authBody_type)"""
+    vaxAuthBody = []
+    for location in list(bestLocations):
+        authBody_type = auth_bodies_col.find({"location": location['_id']['location']}, {"type": 1})
+        vaxAuthBody.append({"Type" : list(authBody_type)[0]['type'], "Address" : location['_id']['location'], "NofVax": location['count']})
+
+    return vaxAuthBody
+
+def getLocationWithMostTests(certs_col, auth_bodies_col):
+    bestLocations = certs_col.aggregate([
+        {"$unwind" : "$list_of_tests"},
+        {"$group": {
+            "_id": { "location" : "$list_of_tests.location" },
+            "count": {"$sum":  1}
+        }},
+        {"$sort": {"count": -1}},
+        {"$limit": 3}
+    ])
+    testAuthBody = []
+    for location in list(bestLocations):
+        authBody_type = auth_bodies_col.find({"location": location['_id']['location']}, {"type": 1})
+        testAuthBody.append({"Type" : list(authBody_type)[0]['type'], "Address" : location['_id']['location'], "NofTest": location['count']})
+
+    return testAuthBody
 
 
 
