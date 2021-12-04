@@ -233,6 +233,14 @@ def getLocationWithMostTests(certs_col, auth_bodies_col):
     return testAuthBody
 
 
+def addPerson(certs_col, name, surname, birthdate, details):
+    person = createPerson(name, surname, birthdate, details, [], [])
+    result = certs_col.insert_one(person)
+    if result.acknowledged == True and str(result.inserted_id) != None:
+        return "Person added to the db with id: " + str(result.inserted_id)
+    else:
+        return "Operation Failed"
+
 
 
 

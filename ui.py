@@ -867,6 +867,55 @@ def createFrame11():
     return frame11
 """
 
+# Frame Somaschini 2
+def createFrame12():
+    def addPerson():
+        if entries['First Name'].get() == "" or entries['Last Name'].get() == "" or entries['Birthdate'].get_date() == "" or entries['Details'].get() == "":
+            log = "Some entries are missing"
+        else:
+            log = func.addPerson(
+                    global_var.db['Certificate_Collection'],
+                    entries['First Name'].get().upper(),
+                    entries['Last Name'].get().upper(),
+                    entries['Birthdate'].get_date(),
+                    entries['Details'].get()
+            )
+
+        label_output.config(text=log)
+        label_output.pack()
+        return
+
+    def goToMenu():
+        frame12.pack_forget()
+        label_output.pack_forget()
+        frame_menu.pack()
+        return
+
+    frame12 = Frame(global_var.root_window, bg="white")
+    label_frame12 = Label(frame12, text="COMMAND: ADD A PERSON", font="20", background="white", pady=20)
+    label_frame12.pack()
+
+    entries = {
+        "First Name":   Entry(frame12),
+        "Last Name":    Entry(frame12),
+        "Birthdate":    Calendar(frame12, date_pattern="yyyy-mm-dd"),
+        "Details":      Entry(frame12)
+    }
+    for label, entry in entries.items():
+        Label(frame12, text = label).pack()
+        entry.pack(pady=5)
+
+    add_contact = Button(frame12, text="Add Contact", command=addPerson)
+    add_contact.pack(pady=5)
+
+    go_to_menu = Button(frame12, text="Go to Menu", command=goToMenu)
+    go_to_menu.pack(pady=5)
+
+    label_output = Label(frame12, text="", font='Arial 14', background="white", foreground="black")
+    label_output.pack()
+
+    return frame12
+
 
 def createDatasetFrame():
     def goToMenu():
@@ -950,6 +999,10 @@ def createMenuFrameAlt():
         frame_menu.pack_forget()
         frame11.pack()
 
+    def goToFrame12():
+        frame_menu.pack_forget()
+        frame12.pack()
+
     frame_menu = Frame(global_var.root_window, height = 1200, width = 1200, bg="white", padx=400)
     label_menu = Label(frame_menu, text="MENU", font="Arial 30", background="white", pady=40)
     label_menu.place(x=-70, y=0)
@@ -1010,8 +1063,8 @@ def createMenuFrameAlt():
     button_frame11 = Button(frame_menu, text="COMMAND 5\nFRAME 11", background="#650AFA", command=goToFrame11, pady=15, width=35)
     button_frame11.place(x=134, y=450)
 
-
-
+    button_frame12 = Button(frame_menu, text="COMMAND 6\nADD A PERSON", background="#650AFA", command=goToFrame12, pady=15, width=35)
+    button_frame12.place(x=134, y=520)
 
     return frame_menu
 
@@ -1037,5 +1090,6 @@ if __name__ == "__main__":
     frame9 = createFrame9()
     frame10 = createFrame10()
     frame11 = createFrame11()
+    frame12 = createFrame12()
 
     global_var.root_window.mainloop()
