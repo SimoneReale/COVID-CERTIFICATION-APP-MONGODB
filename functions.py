@@ -34,6 +34,27 @@ def createGoodAuthorizedBody(name, piva, type, address, gps, department, descrip
     dict_auth = {'active' : True, 'name': name, 'piva': piva, 'type' : type, 'location' : address, 'gps': gps, 'department': department, 'description': description, 'list_of_doctors': doctors_array}
     return dict_auth
 
+#remember -> to create a set that contains the used GPS positions
+#remember -> to add coordinates to usedGPS in the caller method (not doing it here cause it's a copy set I think)
+def returnGPSCoordinates(usedGPSs):
+    while True:
+        x = rm.uniform(-180,180)
+        x = round(x,6)
+        y = rm.uniform(-90,90)
+        y = round(y,6)
+        coordinates = (x,y)
+        if not(coordinates in usedGPSs):
+            return coordinates
+
+
+#remember -> to create a set that contains the used PIVAs
+#remember -> to add the returned PIVA in the caller method (not doing it here cause it's a copy set I think)
+def createPIVA(usedPIVAs):
+    while True:
+        piva = rm.randrange(10000000000,99999999999)
+        if not(piva in usedPIVAs):
+            return piva
+
 
 def returnCF(surname,name,birthdate):
     cities = ["Aosta", "Torino", "Genova", "Milano", "Trento", "Venezia", "Trieste", "Bologna", "Firenze", "Ancona", "Perugia", "Roma", "L'Aquila", "Campobasso", "Napoli", "Bari", "Potenza", "Catanzaro", "Palermo", "Cagliari"]
