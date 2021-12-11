@@ -489,9 +489,11 @@ def createFrame5():
         tree.heading(1, text="Name")
         tree.heading(2, text="Surname")
         tree.heading(3, text="Birth Date")
+        tree.heading(4, text="CF")
         tree.column(1, width = 100)
         tree.column(2, width = 100)
         tree.column(3, width = 100)
+        tree.column(4, width = 100)
 
         col_cert = global_var.db['Certificate_Collection']
         lot = insert_lot.get()
@@ -500,8 +502,8 @@ def createFrame5():
 
         if type(dict_person) is not type(None):
             for person in dict_person:
-                tree.insert('', 'end', values=(person['name'], person['surname'], person['birthdate'] ))
-                print(person[0], person[1], person[2])
+                tree.insert('', 'end', values=(person['name'], person['surname'], person['birthdate'], person['CF'] ))
+                print(person[0], person[1], person[2], person[4])
         return
 
     frame5 = Frame(global_var.root_window, bg="white")
@@ -731,20 +733,18 @@ def createFrame10():
 
     def updateAuthBody():
         col_authBody = global_var.db['AuthorizedBodies_Collection']
-        name=insert_name.get().lower()
-        type=insert_type.get().lower()
-        type = type[0].upper() + type[1:].lower()
+        PIVA=insert_name.get()
         description=insert_description.get().lower() + "\n"
         if insert_active.get().lower() == "true" or insert_active.get().lower() == "false":
             if insert_active.get().lower() == "true" :
                 active = True
             if insert_active.get().lower() == "false" :
                 active = False
-            filter = { "location" : name, "type" : type}
+            filter = { "PIVA" : int(PIVA)}
             values = [{ "$set" : { "active" : active, "description" :  {"$concat": [ {"$ifNull" : ["$description", ""]}, description ]} }}]
 
         else:
-            filter = {"location" : name, "type" : type}
+            filter = {"PIVA" : int(PIVA)}
             values = [{ "$set" : { "description" :  {"$concat": [ {"$ifNull" : ["$description", ""]}, description ]}}}]
         col_authBody.update_one(filter, values)
 
@@ -759,15 +759,10 @@ def createFrame10():
     right_frame.grid(row=0, column=1, sticky="nswe")
 
     # name
-    Label(left_frame, text="Select the name of the auth. body to update:", font='Arial 10', foreground="green", background="white",
+    Label(left_frame, text="Select the PIVA of the auth. body to update:", font='Arial 10', foreground="green", background="white",
           pady=5).grid(row=0, column=0, sticky="nswe")
     insert_name = Entry(left_frame, font="Arial 10")
     insert_name.grid(row=1, column=0, sticky="nswe")
-    # type
-    Label(left_frame, text="Select the type of entity to update:", font='Arial 10', foreground="green",
-          background="white", pady=5).grid(row=4, column=0, sticky="nswe")
-    insert_type = Entry(left_frame, font="Arial 10")
-    insert_type.grid(row=5, column=0, sticky="nswe")
     # description
     Label(left_frame, text="Insert the description TO CONCAT:", font='Arial 10', foreground="green",
           background="white", pady=5).grid(row=8, column=0, sticky="nswe")
