@@ -225,11 +225,14 @@ def getLocationWithMostVaccines(certs_col, auth_bodies_col):
         {"$sort": {"count": -1}},
         {"$limit": 3}
     ])
+<<<<<<< HEAD
     # Draft per fare una sola query -> Come matchare luoghi con la stessa via ma tipo diverso?
+=======
+>>>>>>> 969aa2b04a8f0939a8e40cc751a76f12d306f9d1
     vaxAuthBody = []
     for location in list(bestLocations):
-        authBody_type = auth_bodies_col.find({"location": location['_id']['location']}, {"type": 1})
-        vaxAuthBody.append({"Type" : list(authBody_type)[0]['type'], "Address" : location['_id']['location'], "NofVax": location['count']})
+        authBody_type = auth_bodies_col.find({"piva": location['_id']['piva']}, {"type": 1})
+        vaxAuthBody.append({"Type" : list(authBody_type)[0]['type'], "PIVA" : location['_id']['piva'], "NofVax": location['count']})
 
     return vaxAuthBody
 
@@ -237,7 +240,7 @@ def getLocationWithMostTests(certs_col, auth_bodies_col):
     bestLocations = certs_col.aggregate([
         {"$unwind" : "$list_of_tests"},
         {"$group": {
-            "_id": { "location" : "$list_of_tests.location" },
+            "_id": { "piva" : "$list_of_tests.piva" },
             "count": {"$sum":  1}
         }},
         {"$sort": {"count": -1}},
@@ -245,8 +248,8 @@ def getLocationWithMostTests(certs_col, auth_bodies_col):
     ])
     testAuthBody = []
     for location in list(bestLocations):
-        authBody_type = auth_bodies_col.find({"location": location['_id']['location']}, {"type": 1})
-        testAuthBody.append({"Type" : list(authBody_type)[0]['type'], "Address" : location['_id']['location'], "NofTest": location['count']})
+        authBody_type = auth_bodies_col.find({"piva": location['_id']['piva']}, {"type": 1})
+        testAuthBody.append({"Type" : list(authBody_type)[0]['type'], "PIVA" : location['_id']['piva'], "NofTest": location['count']})
 
     return testAuthBody
 

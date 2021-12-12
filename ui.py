@@ -293,7 +293,7 @@ def createFrame3():
         treeVax.pack_forget()
         treeVax.pack(padx=30, pady=10)
         treeVax.heading(1, text="Type")
-        treeVax.heading(2, text="Address")
+        treeVax.heading(2, text="PIVA")
         treeVax.heading(3, text="# of vaccines")
 
         treeVax.column(1, width=120)
@@ -301,7 +301,7 @@ def createFrame3():
         treeVax.column(3, width=120)
 
         for line in func.getLocationWithMostVaccines(global_var.db['Certificate_Collection'], global_var.db['AuthorizedBodies_Collection']):
-            treeVax.insert('', 'end', values=(line['Type'], line['Address'], line['NofVax']))
+            treeVax.insert('', 'end', values=(line['Type'], line['PIVA'], line['NofVax']))
 
         return 
 
@@ -312,7 +312,7 @@ def createFrame3():
         treeTest.pack_forget()
         treeTest.pack(padx=30, pady=10)
         treeTest.heading(1, text="Type")
-        treeTest.heading(2, text="Address")
+        treeTest.heading(2, text="PIVA")
         treeTest.heading(3, text="# of tests")
 
         treeTest.column(1, width=120)
@@ -320,7 +320,7 @@ def createFrame3():
         treeTest.column(3, width=120)
 
         for line in func.getLocationWithMostTests(global_var.db['Certificate_Collection'], global_var.db['AuthorizedBodies_Collection']):
-            treeTest.insert('', 'end', values=(line['Type'], line['Address'], line['NofTest']))
+            treeTest.insert('', 'end', values=(line['Type'], line['PIVA'], line['NofTest']))
 
         return
 
