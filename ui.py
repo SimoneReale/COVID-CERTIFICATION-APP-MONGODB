@@ -335,7 +335,7 @@ def createFrame3():
         return
 
     frame3 = Frame(global_var.root_window, bg="white")
-    label_frame3 = Label(frame3, text="QUERY 3: LOCATIONS WITH MOST VACCINES/TESTS", font="20", background="white", pady=20)
+    label_frame3 = Label(frame3, text="LOCATIONS WITH MOST VACCINES/TESTS", font="20", background="white", pady=20)
     label_frame3.pack()
 
     button_create = Button(frame3, text="Find", command=getLocations, padx=20, pady=10)
@@ -433,7 +433,7 @@ def createFrame4():
         return
 
     frame4 = Frame(global_var.root_window, bg="white")
-    label_frame4 = Label(frame4, text="FRAME 4 URSO", font="20", background="white", pady=5)
+    label_frame4 = Label(frame4, text="SEARCH VACCINE/TEST FOR EACH PERSON", font="20", background="white", pady=5)
     label_frame4.pack()
 
     sub_frame_qr = Frame(frame4, bg='white')
@@ -880,7 +880,7 @@ def createFrame12():
         return
 
     frame12 = Frame(global_var.root_window, bg="white")
-    label_frame12 = Label(frame12, text="COMMAND: ADD A PERSON", font="20", background="white", pady=20)
+    label_frame12 = Label(frame12, text="ADD A PERSON", font="20", background="white", pady=20)
     label_frame12.pack()
 
     entries = {
