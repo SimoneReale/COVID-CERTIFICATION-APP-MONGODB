@@ -379,10 +379,10 @@ def createFrame4():
         tree.column(6, width=120)
 
         col_cert = global_var.db['Certificate_Collection']
-        person_name = insert_name.get().upper()
-        person_surname = insert_surname.get().upper()
+        person_cf = insert_cf.get().upper()
+        
 
-        query = {"name": person_name, "surname": person_surname}
+        query = {"cf": person_cf}
         dict_person = col_cert.find_one(query)
 
         #if type(dict_person) is not type(None):
@@ -392,7 +392,7 @@ def createFrame4():
         #            print(vaccination[key])
         if type(dict_person) is not type(None):
             for vaccination in dict_person['list_of_vaccinations']:
-                tree.insert('', 'end', values=(vaccination['brand'], vaccination['lot'], vaccination['date'], vaccination['production_date'], vaccination['location'], vaccination['cf_doctor']))
+                tree.insert('', 'end', values=(vaccination['brand'], vaccination['lot'], vaccination['date'], vaccination['production_date'], vaccination['location'], vaccination['doctor']))
         return
     def searchTests():
         for row in tree.get_children():
@@ -415,10 +415,9 @@ def createFrame4():
         tree.column(6, width=0)
 
         col_cert = global_var.db['Certificate_Collection']
-        person_name = insert_name.get().upper()
-        person_surname = insert_surname.get().upper()
+        person_cf = insert_cf.get().upper()
 
-        query = {"name": person_name, "surname": person_surname}
+        query = {"cf": person_cf}
         dict_person = col_cert.find_one(query)
 
         # if type(dict_person) is not type(None):
@@ -430,7 +429,7 @@ def createFrame4():
             for test in dict_person['list_of_tests']:
                 tree.insert('', 'end', values=(
                 test['test_type'], test['date'], test['location'], test['result'],
-                test['cf_doctor']))
+                test['doctor']))
         return
 
     frame4 = Frame(global_var.root_window, bg="white")
@@ -441,16 +440,11 @@ def createFrame4():
     sub_frame_insert = Frame(frame4, bg='white')
     sub_frame_insert.pack()
 
-    # name
-    Label(sub_frame_insert, text="Insert the name of patient:", font='Arial 15', foreground="green", background="white",
+    #cf
+    Label(sub_frame_insert, text="Insert the cf of patient:", font='Arial 15', foreground="green", background="white",
           pady=2).pack()
-    insert_name = Entry(sub_frame_insert, font="Arial 20")
-    insert_name.pack(pady=2)
-    # surname
-    Label(sub_frame_insert, text="Insert the surname of patient:", font='Arial 15', foreground="green",
-          background="white", pady=5).pack()
-    insert_surname = Entry(sub_frame_insert, font="Arial 20")
-    insert_surname.pack(pady=2)
+    insert_cf = Entry(sub_frame_insert, font="Arial 20")
+    insert_cf.pack(pady=2)
 
     # add button
     button_search_vaccines = Button(sub_frame_insert, text="FIND VACCINES!", command=searchVaccines, padx=30, pady=10)
@@ -506,7 +500,7 @@ def createFrame5():
     #sub_frame_qr = Frame(frame5, bg='white')
     sub_frame_insert = Frame(frame5, bg='white')
     sub_frame_insert.pack()
-    Label(sub_frame_insert, text="Insert the lot value (7 int values):", font='Arial 15', foreground="green", background="white", pady=2).pack()
+    Label(sub_frame_insert, text="Insert the lot value:", font='Arial 15', foreground="green", background="white", pady=2).pack()
     insert_lot = Entry(sub_frame_insert, font="Arial 20")
     insert_lot.pack(pady=2)    
     button_search = Button(sub_frame_insert, text="FIND PEOPLE!", command=getInput, padx=30, pady=10)

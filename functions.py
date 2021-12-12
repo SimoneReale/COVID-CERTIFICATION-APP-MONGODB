@@ -15,12 +15,12 @@ def createAuthorizedBody(active, location, type, list_of_doctors, piva, gps):
     dict_auth = {'active' : active, 'location' : location, 'type' : type, 'list_of_doctors' : list_of_doctors, 'piva' : piva, 'gps' : gps}
     return dict_auth
 
-def createVaccine(brand, lot, date, production_date,  location, cf_doctor, piva):
-    dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'production_date' : production_date,  'location' : location, 'cf_doctor' : cf_doctor, 'piva' : piva}
+def createVaccine(brand, lot, date, production_date,  location, doctor, piva):
+    dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'production_date' : production_date,  'location' : location, 'doctor' : doctor, 'piva' : piva}
     return dict_vaccine
 
-def createTest(test_type, date, location, result, cf_doctor, piva):
-    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctor' : cf_doctor, 'piva' : piva}
+def createTest(test_type, date, location, result, doctor, piva):
+    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'doctor' : doctor, 'piva' : piva}
     return dict_test
 
 def createPerson(name, surname, birthdate, details, list_of_vaccinations, list_of_tests, cf):
@@ -225,10 +225,6 @@ def getLocationWithMostVaccines(certs_col, auth_bodies_col):
         {"$sort": {"count": -1}},
         {"$limit": 3}
     ])
-<<<<<<< HEAD
-    # Draft per fare una sola query -> Come matchare luoghi con la stessa via ma tipo diverso?
-=======
->>>>>>> 969aa2b04a8f0939a8e40cc751a76f12d306f9d1
     vaxAuthBody = []
     for location in list(bestLocations):
         authBody_type = auth_bodies_col.find({"piva": location['_id']['piva']}, {"type": 1})
@@ -340,7 +336,7 @@ def createDataset(number_of_people, db):
                         gps = auth_bod['gps']
                         iva = auth_bod['piva']
                         test_result = True if random() < conf.probability_positive_test_result else False
-                        test = createTest(rm.choice(conf.type_of_test), str(returnRandomDate()), auth_bod['location'], test_result, rm.choice(list_of_doc), iva, gps)
+                        test = createTest(rm.choice(conf.type_of_test), str(returnRandomDate()), auth_bod['location'], test_result, rm.choice(list_of_doc), iva)
                         list_of_tests.append(test)
 
                     person_details = descr.returnFraseDescrizione()
