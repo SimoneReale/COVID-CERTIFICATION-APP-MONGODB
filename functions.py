@@ -11,20 +11,20 @@ import descrizione as descr
 from codicefiscale import codicefiscale
 
 
-def createAuthorizedBody(active, location, type, list_of_doctors):
-    dict_auth = {'active' : active, 'location' : location, 'type' : type, 'list_of_doctors' : list_of_doctors}
+def createAuthorizedBody(active, location, type, list_of_doctors, piva, gps):
+    dict_auth = {'active' : active, 'location' : location, 'type' : type, 'list_of_doctors' : list_of_doctors, 'piva' : piva, 'gps' : gps}
     return dict_auth
 
-def createVaccine(brand, lot, date, production_date,  location, cf_doctor):
-    dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'production_date' : production_date,  'location' : location, 'cf_doctor' : cf_doctor}
+def createVaccine(brand, lot, date, production_date,  location, cf_doctor, piva):
+    dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'production_date' : production_date,  'location' : location, 'cf_doctor' : cf_doctor, 'piva' : piva}
     return dict_vaccine
 
-def createTest(test_type, date, location, result, cf_doctor):
-    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctor' : cf_doctor}
+def createTest(test_type, date, location, result, cf_doctor, piva, gps):
+    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctor' : cf_doctor, 'piva' : piva, 'gps' : gps}
     return dict_test
 
-def createPerson(name, surname, birthdate, details, list_of_vaccinations, list_of_tests):
-    dict_person = {'name' : name, 'surname' : surname, 'birthdate' : birthdate, 'details' : details, 'list_of_vaccinations' : list_of_vaccinations, 'list_of_tests' : list_of_tests}
+def createPerson(name, surname, birthdate, details, list_of_vaccinations, list_of_tests, cf):
+    dict_person = {'name' : name, 'surname' : surname, 'birthdate' : birthdate, 'details' : details, 'list_of_vaccinations' : list_of_vaccinations, 'list_of_tests' : list_of_tests, 'cf' : cf}
     validity_date = returnCertificateExpirationDate(dict_person)
     dict_person['validity_date'] = str(validity_date)
     return dict_person
@@ -273,19 +273,28 @@ def createDataset(number_of_people, db):
                 lista_nomi = nomi.readlines()
                 lista_cognomi = cognomi.readlines()
                 lista_vie = vie.readlines()
+
+                usedPivas = []
+                usedGps = []
                 
                 #creo gli auth_bod
                 list_of_authbod = []
                 #minimo 2 auth bod in ogni caso 
-                for j in range(0, int(number_of_people / 6) + 2):
+                for _ in range(0, int(number_of_people / 6) + 2):
                     list_of_doctors_auth_bod = []
                     #almeno un medico in ogni auth bod
-                    for f in range(0, randint(0, conf.max_number_of_doctor_per_auth_body) + 1):
+                    for _ in range(0, randint(0, conf.max_number_of_doctor_per_auth_body) + 1):
                         doctor = rm.choice(lista_nomi).strip('\n') + " " +rm.choice(lista_cognomi).strip('\n')
                         list_of_doctors_auth_bod.append(doctor)
 
+                    newPiva = createPIVA(usedPivas)
+                    usedPivas.append(newPiva)
+
+                    newGps = returnGPSCoordinates(usedGps)
+                    usedGps.append(newGps)
+
                     list_of_authbod.append(createAuthorizedBody(True, rm.choice(lista_vie).strip('\n'), 
-                                           conf.type_of_authbody[randint(0, len(conf.type_of_authbody) - 1)], list_of_doctors_auth_bod))
+                                           conf.type_of_authbody[randint(0, len(conf.type_of_authbody) - 1)], list_of_doctors_auth_bod, newPiva, newGps))
 
                 #inserisco nel database gli authorized bodies
                 col_authBod = db['AuthorizedBodies_Collection']
@@ -302,6 +311,8 @@ def createDataset(number_of_people, db):
                     person_surname = rm.choice(lista_cognomi).strip('\n')
                     birthdate = str(returnRandomBirthDate())
 
+                    cf = returnCF(person_surname, person_name, birthdate)
+
                 
                     list_of_vaccinations = []
                         
@@ -311,26 +322,29 @@ def createDataset(number_of_people, db):
                         vacc_lot = randint(500, 10000000)
                         auth_bod = rm.choice(list_of_authbod)
                         list_of_doc = auth_bod['list_of_doctors']
+                        piva = auth_bod['piva']
 
                         date = returnRandomDate()
 
                         production_date = date - datetime.timedelta(days= randint(0, conf.max_number_of_days_between_production_and_use_of_vaccine))
 
-                        vaccine = createVaccine(brand_vacc, vacc_lot, str(returnRandomDate()), str(production_date), auth_bod['location'], list_of_doc[randint(0, len(list_of_doc) - 1)])
+                        vaccine = createVaccine(brand_vacc, vacc_lot, str(returnRandomDate()), str(production_date), auth_bod['location'], list_of_doc[randint(0, len(list_of_doc) - 1)], piva)
                         list_of_vaccinations.append(vaccine)
 
 
                     list_of_tests = []
 
-                    for k in range(0, randint(0, conf.max_number_of_tests)):
+                    for _ in range(0, randint(0, conf.max_number_of_tests)):
                         auth_bod = rm.choice(list_of_authbod)
                         list_of_doc = auth_bod['list_of_doctors']
+                        gps = auth_bod['gps']
+                        iva = auth_bod['piva']
                         test_result = True if random() < conf.probability_positive_test_result else False
-                        test = createTest(rm.choice(conf.type_of_test), str(returnRandomDate()), auth_bod['location'], test_result, rm.choice(list_of_doc))
+                        test = createTest(rm.choice(conf.type_of_test), str(returnRandomDate()), auth_bod['location'], test_result, rm.choice(list_of_doc), iva, gps)
                         list_of_tests.append(test)
 
                     person_details = descr.returnFraseDescrizione()
-                    person = createPerson(person_name, person_surname, birthdate, person_details, list_of_vaccinations, list_of_tests)
+                    person = createPerson(person_name, person_surname, birthdate, person_details, list_of_vaccinations, list_of_tests, cf)
                     list_of_people.append(person)
 
 
