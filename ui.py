@@ -111,14 +111,13 @@ def createFrame1():
 
     def searchGreenPass():
         col_cert = global_var.db['Certificate_Collection']
-        person_name = insert_name.get().upper()
-        person_surname = insert_surname.get().upper()
+        person_cf = insert_cf.get().upper()
 
-        query = { "name": person_name, "surname" : person_surname}
+        query = { "cf": person_cf}
         dict_person = col_cert.find_one(query)
         validity_string = "Date expiration: " +str(func.returnCertificateExpirationDate(dict_person)) if func.returnCertificateExpirationDate(dict_person) != None else "Invalid certificate"
         label_frame1.configure(text= validity_string, foreground='red')
-        label_person = Label(sub_frame_qr, text = person_name +" " +person_surname, font="Arial 20", background="white", pady=20)
+        label_person = Label(sub_frame_qr, text = dict_person['name'] +" " +dict_person['surname'], font="Arial 20", background="white", pady=20)
         label_person.pack()
 
         if type(dict_person) is not type(None): 
@@ -154,7 +153,7 @@ def createFrame1():
 
         else:
 
-            label_person.configure(text= person_name +" " +person_surname +" NOT FOUND", font="Arial 20", foreground='red')
+            label_person.configure(text = dict_person['name'] +" " +dict_person['surname'] +" NOT FOUND", font="Arial 20", foreground='red')
 
 
         sub_frame_insert.pack_forget()
@@ -172,14 +171,10 @@ def createFrame1():
     sub_frame_insert.pack()
     
 
-    #name
-    Label(sub_frame_insert, text="Insert the name of patient:", font='Arial 15', foreground="green",background="white", pady=5).pack()
-    insert_name = Entry(sub_frame_insert, font="Arial 20")
-    insert_name.pack(pady=5)
-    #surname
-    Label(sub_frame_insert, text="Insert the surname of patient:", font='Arial 15', foreground="green",background="white", pady=5).pack()
-    insert_surname = Entry(sub_frame_insert, font="Arial 20")
-    insert_surname.pack(pady=5)
+    #cf
+    Label(sub_frame_insert, text="Insert the cf of the patient:", font='Arial 15', foreground="green",background="white", pady=5).pack()
+    insert_cf = Entry(sub_frame_insert, font="Arial 20")
+    insert_cf.pack(pady=5)
 
     #add button
     button_search = Button(sub_frame_insert, text="FIND GREEN PASS!", command=searchGreenPass, padx=30, pady=30)
@@ -203,9 +198,8 @@ def createFrame2():
     #da trovare un modo per fare tutto con una query soltanto
     def addVaccine():
         col_cert = global_var.db['Certificate_Collection']
-        person_name = insert_name.get().upper()
-        person_surname = insert_surname.get().upper()   
-        query = { "name": person_name, "surname" : person_surname}
+        person_cf = insert_cf.get().upper()
+        query = { "cf": person_cf}
         dict_person = col_cert.find_one(query)
         
         if type(dict_person) is not type(None):
@@ -218,7 +212,7 @@ def createFrame2():
                  return
 
             new_vaccine= func.createVaccine(option_vaccine_brand_variable.get(), lotto, str(cal_date.get_date()), 
-                                            str(cal_production.get_date()), insert_location.get(), insert_cf_doctor.get().upper())
+                                            str(cal_production.get_date()), insert_location.get(), insert_cf_doctor.get().upper(), int(insert_piva.get()))
 
             list_of_vaccinations.append(new_vaccine)
             newvalues = { "$set": { "list_of_vaccinations": list_of_vaccinations } }
@@ -226,7 +220,7 @@ def createFrame2():
 
 
             #aggiorno la validità
-            func.updateValidity(col_cert, person_name, person_surname)
+            func.updateValidity(col_cert, person_cf)
 
         else:
             label_frame2.configure(text="ERROR", foreground="red")
@@ -243,14 +237,14 @@ def createFrame2():
     right_frame = Frame(frame2, background='white')
     right_frame.grid(row=0, column=1, sticky="nswe")
 
-    #name
-    Label(left_frame, text="Insert the name of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=0, column=0, sticky="nswe")
-    insert_name = Entry(left_frame, font="Arial 10")
-    insert_name.grid(row=1, column=0, sticky="nswe")
-    #surname
-    Label(left_frame, text="Insert the surname of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=2, column=0, sticky="nswe")
-    insert_surname = Entry(left_frame, font="Arial 10")
-    insert_surname.grid(row=3, column=0, sticky="nswe")
+    #cf
+    Label(left_frame, text="Insert the cf of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=0, column=0, sticky="nswe")
+    insert_cf = Entry(left_frame, font="Arial 10")
+    insert_cf.grid(row=1, column=0, sticky="nswe")
+    #piva
+    Label(left_frame, text="Insert the piva of the authorized body:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=2, column=0, sticky="nswe")
+    insert_piva = Entry(left_frame, font="Arial 10")
+    insert_piva.grid(row=3, column=0, sticky="nswe")
     #brand
     choices = conf.vaccines
     option_vaccine_brand_variable = StringVar(left_frame)
@@ -502,8 +496,7 @@ def createFrame5():
 
         if type(dict_person) is not type(None):
             for person in dict_person:
-                tree.insert('', 'end', values=(person['name'], person['surname'], person['birthdate'], person['CF'] ))
-                print(person[0], person[1], person[2], person[4])
+                tree.insert('', 'end', values=(person['name'], person['surname'], person['birthdate'], person['cf'] ))
         return
 
     frame5 = Frame(global_var.root_window, bg="white")
@@ -519,7 +512,7 @@ def createFrame5():
     button_search = Button(sub_frame_insert, text="FIND PEOPLE!", command=getInput, padx=30, pady=10)
     button_search.pack()
 
-    tree = Treeview(frame5, columns = (1,2,3), height = 10, show = "headings")
+    tree = Treeview(frame5, columns = (1,2,3,4), height = 10, show = "headings")
 
     go_to_menu = Button(frame5, text="Go to Menu", command=goToMenu)
     go_to_menu.pack()
@@ -643,9 +636,8 @@ def createFrame9():
     #da trovare un modo per fare tutto con una query soltanto
     def addTest():
         col_cert = global_var.db['Certificate_Collection']
-        person_name = insert_name.get().upper()
-        person_surname = insert_surname.get().upper()   
-        query = { "name": person_name, "surname" : person_surname}
+        person_cf = insert_cf.get().upper()  
+        query = { "cf": person_cf}
         dict_person = col_cert.find_one(query)
         if type(dict_person) is not type(None):
             label_frame9.configure(text="ADD A TEST")
@@ -654,14 +646,14 @@ def createFrame9():
             result = False if test_result.get() == 0 else True
 
             new_test= func.createTest(option_test_type_variable.get(), str(cal_date.get_date()), 
-                                    insert_location.get(), result, insert_cf_doctor.get().upper())
+                                    insert_location.get(), result, insert_cf_doctor.get().upper(), int(insert_piva.get()))
 
             list_of_tests.append(new_test)
             newvalues = { "$set": { "list_of_tests": list_of_tests } }
             col_cert.update_one(query, newvalues)
 
 
-            func.updateValidity(col_cert, person_name, person_surname)
+            func.updateValidity(col_cert, person_cf)
 
         else:
             label_frame9.configure(text="ERROR")
@@ -682,13 +674,13 @@ def createFrame9():
     test_result = IntVar()
 
     #name
-    Label(left_frame, text="Insert the name of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=0, column=0, sticky="nswe")
-    insert_name = Entry(left_frame, font="Arial 10")
-    insert_name.grid(row=1, column=0, sticky="nswe")
-    #surname
-    Label(left_frame, text="Insert the surname of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=2, column=0, sticky="nswe")
-    insert_surname = Entry(left_frame, font="Arial 10")
-    insert_surname.grid(row=3, column=0, sticky="nswe")
+    Label(left_frame, text="Insert the cf of the patient:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=0, column=0, sticky="nswe")
+    insert_cf = Entry(left_frame, font="Arial 10")
+    insert_cf.grid(row=1, column=0, sticky="nswe")
+    #piva
+    Label(left_frame, text="Insert the piva of the authorized body:", font='Arial 10', foreground="green",background="white", pady=5).grid(row=2, column=0, sticky="nswe")
+    insert_piva = Entry(left_frame, font="Arial 10")
+    insert_piva.grid(row=3, column=0, sticky="nswe")
     #test type
     choices = conf.type_of_test
     option_test_type_variable = StringVar(left_frame)
@@ -740,11 +732,11 @@ def createFrame10():
                 active = True
             if insert_active.get().lower() == "false" :
                 active = False
-            filter = { "PIVA" : int(PIVA)}
+            filter = { "piva" : int(PIVA)}
             values = [{ "$set" : { "active" : active, "description" :  {"$concat": [ {"$ifNull" : ["$description", ""]}, description ]} }}]
 
         else:
-            filter = {"PIVA" : int(PIVA)}
+            filter = {"piva" : int(PIVA)}
             values = [{ "$set" : { "description" :  {"$concat": [ {"$ifNull" : ["$description", ""]}, description ]}}}]
         col_authBody.update_one(filter, values)
 
@@ -791,7 +783,7 @@ def createFrame11():
 
     def addAuthBody():
         col_authBody = global_var.db['AuthorizedBodies_Collection']
-        new_auth_body = func.createGoodAuthorizedBody(name=insert_name.get(), piva=insert_piva.get(), type=insert_type.get(),
+        new_auth_body = func.createGoodAuthorizedBody(name=insert_name.get(), piva= int(insert_piva.get()), type=insert_type.get(),
                                                           address=insert_addr.get(), gps=insert_location.get(), department=insert_dept.get(),
                                                           description=insert_description.get(), doctors=insert_docs.get())
         col_authBody.insert_one(new_auth_body)
@@ -1062,7 +1054,7 @@ def createMenuFrameAlt():
     button_frame10 = Button(frame_menu, text="COMMAND 4\nUPDATE STATE OF AUTHORIZED BODY ", background="#650AFA", command=goToFrame10, pady=15, width=35)
     button_frame10.place(x=134, y=380)
 
-    button_frame11 = Button(frame_menu, text="COMMAND 5\nFRAME 11", background="#650AFA", command=goToFrame11, pady=15, width=35)
+    button_frame11 = Button(frame_menu, text="COMMAND 5\nADD AN AUTHORIZED BODY", background="#650AFA", command=goToFrame11, pady=15, width=35)
     button_frame11.place(x=134, y=450)
 
     button_frame12 = Button(frame_menu, text="COMMAND 6\nADD A PERSON", background="#650AFA", command=goToFrame12, pady=15, width=35)

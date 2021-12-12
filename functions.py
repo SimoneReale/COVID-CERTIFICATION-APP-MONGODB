@@ -19,8 +19,8 @@ def createVaccine(brand, lot, date, production_date,  location, cf_doctor, piva)
     dict_vaccine = {'brand' : brand, 'lot' : lot, 'date' : date, 'production_date' : production_date,  'location' : location, 'cf_doctor' : cf_doctor, 'piva' : piva}
     return dict_vaccine
 
-def createTest(test_type, date, location, result, cf_doctor, piva, gps):
-    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctor' : cf_doctor, 'piva' : piva, 'gps' : gps}
+def createTest(test_type, date, location, result, cf_doctor, piva):
+    dict_test = {'test_type' : test_type, 'date' : date, 'location' : location, 'result' : result, 'cf_doctor' : cf_doctor, 'piva' : piva}
     return dict_test
 
 def createPerson(name, surname, birthdate, details, list_of_vaccinations, list_of_tests, cf):
@@ -205,8 +205,8 @@ def getNumOfDosesPerVaccine(col_cert):
     return [data,labels]
 
 
-def updateValidity(certificate_collection, name, surname):
-    query = { "name": name, "surname" : surname}
+def updateValidity(certificate_collection, cf):
+    query = { "cf": cf}
     dict_person = certificate_collection.find_one(query)
 
     newvalues = { "$set": { "validity_date": str(returnCertificateExpirationDate(dict_person)) } }
@@ -219,16 +219,13 @@ def getLocationWithMostVaccines(certs_col, auth_bodies_col):
     bestLocations = certs_col.aggregate([
         {"$unwind" : "$list_of_vaccinations"},
         {"$group": {
-            "_id": { "location" : "$list_of_vaccinations.location" },
+            "_id": { "piva" : "$list_of_vaccinations.piva" },
             "count": {"$sum":  1}
         }},
         {"$sort": {"count": -1}},
         {"$limit": 3}
     ])
     # Draft per fare una sola query -> Come matchare luoghi con la stessa via ma tipo diverso?
-    """locations = [location['_id']['location'] for location in bestLocations]
-    authBody_type = auth_bodies_col.find({"location": {"$in": [locations]}}, {"type": 1})
-    authBody_type = list(authBody_type)"""
     vaxAuthBody = []
     for location in list(bestLocations):
         authBody_type = auth_bodies_col.find({"location": location['_id']['location']}, {"type": 1})
@@ -255,7 +252,7 @@ def getLocationWithMostTests(certs_col, auth_bodies_col):
 
 
 def addPerson(certs_col, name, surname, birthdate, details):
-    person = createPerson(name, surname, birthdate, details, [], [])
+    person = createPerson(name, surname, birthdate, details, [], [], returnCF(surname, name, birthdate))
     result = certs_col.insert_one(person)
     if result.acknowledged == True and str(result.inserted_id) != None:
         return "Person added to the db with id: " + str(result.inserted_id)
